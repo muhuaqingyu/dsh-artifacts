@@ -17,58 +17,43 @@ button:disabled{opacity:.6;cursor:default}
 <body>
 <form class="box" id="f" autocomplete="off">
   <h1>扬子江药业招投标系统</h1>
-  <p class="sub">原型与需求文档仅对项目组成员开放，请输入访问密码。</p>
+  <p class="sub">进入交付目录需输入访问密码；目录内的原型与文档打开时不再询问。</p>
   <label for="pw">访问密码</label>
   <input id="pw" type="password" placeholder="请输入密码" autofocus>
-  <button id="go" type="submit">进入</button>
+  <button id="go" type="submit">进入目录</button>
   <div class="err" id="err"></div>
-  <div class="foot">首次进入需输入密码，之后在本浏览器保持登录状态；如需在本机退出，可在目录页底部点「清除本机密码」。</div>
+  <div class="foot">首次输入后本机保持登录；如需在本机退出，可在目录页底部点「清除本机密码」。</div>
 </form>
 <script>
 (function(){
-  var SALT=Uint8Array.from(atob('V31ijz2nXNc8lwOLd8HcOQ=='),function(c){return c.charCodeAt(0);});
-  var ITER=200000, BASE='https://muhuaqingyu.github.io/dsh-artifacts/', KEY='yzj_key';
-  var q=new URLSearchParams(location.search), target=q.get('p')||'landing';
-  var params={}; q.forEach(function(v,k){ if(k!=='p') params[k]=v; });
-
-  function nav(keyB64){
-    try { localStorage.setItem(KEY,keyB64); } catch(e) { sessionStorage.setItem(KEY,keyB64); }
-    fetch('pages/'+target+'.enc',{cache:'no-store'}).then(function(r){
+  var SALT=Uint8Array.from(atob('jVc5w3nVIuL3clsI1Gy4hA=='),function(c){return c.charCodeAt(0);});
+  var ITER=200000, KEY='yzj_key';
+  var cached=null; try { cached=localStorage.getItem(KEY); } catch(e){}
+  function openLanding(kb64){
+    try { localStorage.setItem(KEY,kb64); } catch(e){}
+    fetch('pages/landing.enc',{cache:'no-store'}).then(function(r){
       if(!r.ok) throw new Error('HTTP '+r.status);
       return r.arrayBuffer();
     }).then(function(buf){
-      var raw=Uint8Array.from(atob(keyB64),function(c){return c.charCodeAt(0);});
+      var raw=Uint8Array.from(atob(kb64),function(c){return c.charCodeAt(0);});
       return crypto.subtle.importKey('raw',raw,{name:'AES-GCM'},false,['decrypt'])
         .then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},k,new Uint8Array(buf,12)); });
     }).then(function(plain){
-      var html=new TextDecoder('utf-8').decode(plain);
-      var base=location.origin+location.pathname.replace(/[^\/]*$/,'');
-      var inject='<script>window.__YZJ_PARAMS='+JSON.stringify(params)+';<\/script>';
-      html=html.replace('__YZJ_BASE__', base);
-      html=html.replace(/<head([^>]*)>/i, function(m){ return m+inject; });
-      var u=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+      var u=URL.createObjectURL(new Blob([plain],{type:'text/html'}));
       location.replace(u);
     }).catch(function(e){ document.getElementById('err').textContent='加载失败：'+e.message; document.getElementById('go').disabled=false; });
   }
-
-  var cached=(function(){ try { return localStorage.getItem(KEY); } catch(e) { return sessionStorage.getItem(KEY); } })();
-  if(cached){ nav(cached); }
-
+  if(cached){ openLanding(cached); }
   document.getElementById('f').addEventListener('submit',function(ev){
     ev.preventDefault();
-    var pw=document.getElementById('pw').value;
-    if(!pw) return;
+    var pw=document.getElementById('pw').value; if(!pw) return;
     var go=document.getElementById('go'); go.disabled=true; document.getElementById('err').textContent='';
     crypto.subtle.importKey('raw',new TextEncoder().encode(pw),{name:'PBKDF2'},false,['deriveKey'])
       .then(function(base){ return crypto.subtle.deriveKey({name:'PBKDF2',salt:SALT,iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['decrypt']); })
-      .then(function(k){
-        return fetch('pages/check.enc',{cache:'no-store'}).then(function(r){return r.arrayBuffer();}).then(function(buf){
-          return crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},k,new Uint8Array(buf,12)).then(function(){
-            return crypto.subtle.exportKey('raw',k);
-          });
-        });
-      })
-      .then(function(raw){ var b64=btoa(String.fromCharCode.apply(null,new Uint8Array(raw))); nav(b64); })
+      .then(function(k){ return fetch('pages/check.enc',{cache:'no-store'}).then(function(r){return r.arrayBuffer();}).then(function(buf){
+        return crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},k,new Uint8Array(buf,12)).then(function(){ return crypto.subtle.exportKey('raw',k); });
+      }); })
+      .then(function(raw){ var b64=btoa(String.fromCharCode.apply(null,new Uint8Array(raw))); openLanding(b64); })
       .catch(function(){ go.disabled=false; document.getElementById('pw').select(); document.getElementById('err').textContent='密码不正确，请重试'; });
   });
 })();
