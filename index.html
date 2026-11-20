@@ -1,65 +1,76 @@
 <!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>扬子江药业招投标系统 · 交付目录（原型 / 需规 V3.5）</title>
+<title>需要访问密码 · 扬子江药业招投标系统</title>
 <style>
-body{margin:0;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#f5f7fa;color:#1f2d3d}
-.wrap{max-width:780px;margin:0 auto;padding:48px 24px}
-h1{font-size:22px;margin:0 0 6px}
-.sub{color:#6b7a90;font-size:13px;margin-bottom:28px}
-.sec{font-size:12px;color:#8b98ab;letter-spacing:.06em;margin:26px 0 10px}
-.card{background:#fff;border:1px solid #e6ebf2;border-radius:8px;padding:20px 22px;margin-bottom:14px}
-.card h2{font-size:15px;margin:0 0 8px}
-.card p{margin:0 0 14px;font-size:13px;color:#5b6b82;line-height:1.7}
-a.b{display:inline-block;background:#1f5fbf;color:#fff;text-decoration:none;padding:9px 18px;border-radius:6px;font-size:13px;margin:0 8px 8px 0}
-a.b.ghost{background:#fff;color:#39506e;border:1px solid #cdd8e6}
-a.b:hover{opacity:.9}
-.tag{display:inline-block;font-size:11px;color:#1f5fbf;background:#e8f1ff;border-radius:10px;padding:2px 8px;margin-left:8px;vertical-align:middle}
-.hint{font-size:12px;color:#93a1b5;line-height:1.8;margin:8px 0 0}
-.foot{margin-top:26px;font-size:12px;color:#93a1b5;line-height:1.9}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:linear-gradient(160deg,#eef3fb,#f7f9fc 55%,#eaf0f8);color:#1f2d3d}
+.box{width:min(400px,88vw);background:#fff;border:1px solid #e3e9f2;border-radius:12px;padding:30px 28px 24px;box-shadow:0 12px 34px rgba(31,60,110,.10)}
+h1{font-size:17px;margin:0 0 6px}
+.sub{font-size:12.5px;color:#7b8aa0;line-height:1.7;margin:0 0 20px}
+label{display:block;font-size:12.5px;color:#5b6b82;margin-bottom:6px}
+input{width:100%;box-sizing:border-box;height:40px;border:1px solid #d6dfec;border-radius:7px;padding:0 12px;font-size:14px;font-family:inherit;outline:none}
+input:focus{border-color:#1f5fbf;box-shadow:0 0 0 3px rgba(31,95,191,.12)}
+button{width:100%;height:40px;margin-top:14px;border:0;border-radius:7px;background:#1f5fbf;color:#fff;font-size:14px;font-family:inherit;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+.err{color:#c0392b;font-size:12.5px;min-height:18px;margin-top:10px}
+.foot{margin-top:16px;font-size:11.5px;color:#9aa8bb;line-height:1.7}
 </style></head>
-<body><div class="wrap">
-<h1>扬子江药业招投标系统 · 交付目录</h1>
-<div class="sub">可交互原型 + 需求规格说明书 V3.5 ｜ 最后发布 2026-11-20</div>
+<body>
+<form class="box" id="f" autocomplete="off">
+  <h1>扬子江药业招投标系统</h1>
+  <p class="sub">原型与需求文档仅对项目组成员开放，请输入访问密码。</p>
+  <label for="pw">访问密码</label>
+  <input id="pw" type="password" placeholder="请输入密码" autofocus>
+  <button id="go" type="submit">进入</button>
+  <div class="err" id="err"></div>
+  <div class="foot">密码在一次浏览器会话内有效；关闭浏览器后需重新输入。</div>
+</form>
+<script>
+(function(){
+  var SALT=Uint8Array.from(atob('70IAT8yjR8WqyuhqQGV+Zw=='),function(c){return c.charCodeAt(0);});
+  var ITER=200000, BASE='https://muhuaqingyu.github.io/dsh-artifacts/', KEY='yzj_key';
+  var q=new URLSearchParams(location.search), target=q.get('p')||'landing';
+  var params={}; q.forEach(function(v,k){ if(k!=='p') params[k]=v; });
 
-<div class="sec">一、可交互原型</div>
+  function nav(keyB64){
+    sessionStorage.setItem(KEY,keyB64);
+    fetch('pages/'+target+'.enc',{cache:'no-store'}).then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.arrayBuffer();
+    }).then(function(buf){
+      var raw=Uint8Array.from(atob(keyB64),function(c){return c.charCodeAt(0);});
+      return crypto.subtle.importKey('raw',raw,{name:'AES-GCM'},false,['decrypt'])
+        .then(function(k){ return crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},k,new Uint8Array(buf,12)); });
+    }).then(function(plain){
+      var html=new TextDecoder('utf-8').decode(plain);
+      var base=location.origin+location.pathname.replace(/[^\/]*$/,'');
+      var inject='<script>window.__YZJ_PARAMS='+JSON.stringify(params)+';<\/script>';
+      html=html.replace('__YZJ_BASE__', base);
+      html=html.replace(/<head([^>]*)>/i, function(m){ return m+inject; });
+      var u=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+      location.replace(u);
+    }).catch(function(e){ document.getElementById('err').textContent='加载失败：'+e.message; document.getElementById('go').disabled=false; });
+  }
 
-<div class="card">
-  <h2>招标系统原型（桌面端）<span class="tag">web</span></h2>
-  <p>单文件 HTML，含项目计划、招标文件、发标管理、开评标工具、定标、变更、招标失败、专家库、清标、数据统计等全部节点；左上「原型说明 → 版本更新记录」可查看 7补 全部改动条目。</p>
-  <a class="b" href="proto/index.html" target="_blank" rel="noopener">打开桌面端原型</a>
-</div>
+  var cached=sessionStorage.getItem(KEY);
+  if(cached){ nav(cached); }
 
-<div class="card">
-  <h2>移动审批原型（手机端）<span class="tag">mobile</span></h2>
-  <p>手机端审批页集合（公告发布、邀请函、招标文件、投标人审核、评标汇总、移交、议价邀请、定标、招标失败等），左侧目录可直接切换审批页。建议在手机上打开，或把浏览器窗口拉窄查看。</p>
-  <a class="b" href="proto/mobile.html" target="_blank" rel="noopener">打开移动端原型</a>
-  <p class="hint">手机上打开时，菜单在页面左侧，向右滚动可见手机框；也可直接把链接发到手机浏览器。</p>
-</div>
-
-<div class="sec">二、需求文档</div>
-
-<div class="card">
-  <h2>需求规格说明书（V3.5）</h2>
-  <p>已合并 V3.3 / V3.4 / V3.5 三轮修订：正确排序版本号，并在 4.1、8.13、6.4、5.6、6.19、4.14、4.20 七章末补充「本次修订」小节。全文 435 页。</p>
-  <a class="b" href="preview.html?f=PRD-V3.5.pdf&amp;w=PRD-V3.5.docx&amp;t=%E9%9C%80%E6%B1%82%E8%A7%84%E6%A0%BC%E8%AF%B4%E6%98%8E%E4%B9%A6%20V3.5&amp;m=435%20%E9%A1%B5%20%C2%B7%202026-11-20">在线预览（翻页阅读）</a>
-  <a class="b ghost" href="PRD-V3.5.docx" download>下载 Word（34.7 MB）</a>
-  <a class="b ghost" href="PRD-V3.5.pdf" download>下载 PDF（28.2 MB）</a>
-</div>
-
-<div class="card">
-  <h2>在线看修订要点（无需下载）</h2>
-  <p>本轮只想确认改了哪些条款？这一页把修订历史末三条与七个「本次修订」小节全文列在一起，一屏扫完。</p>
-  <a class="b" href="revision.html">打开在线修订说明</a>
-</div>
-
-<div class="card">
-  <h2>需求变更说明<span class="tag">V1.4</span></h2>
-  <p>原型与需求文档的逐项差异对照（53 项，含涉及端 / 基线口径 / 本次变更 / 影响章节），已标注并入需规 V3.5。</p>
-  <a class="b" href="preview.html?f=ChangeNote-V1.4.pdf&amp;w=ChangeNote-V1.4.docx&amp;t=%E9%9C%80%E6%B1%82%E5%8F%98%E6%9B%B4%E8%AF%B4%E6%98%8E%20V1.4&amp;m=26%20%E9%A1%B5%20%C2%B7%202026-11-20">在线预览（翻页阅读）</a>
-  <a class="b ghost" href="ChangeNote-V1.4.docx" download>下载 Word（62 KB）</a>
-</div>
-
-<div class="foot">
-本页由 GitHub Pages 长期托管，地址固定：muhuaqingyu.github.io/dsh-artifacts ｜ 内容更新后覆盖发布，地址不变。
-</div>
-</div></body></html>
+  document.getElementById('f').addEventListener('submit',function(ev){
+    ev.preventDefault();
+    var pw=document.getElementById('pw').value;
+    if(!pw) return;
+    var go=document.getElementById('go'); go.disabled=true; document.getElementById('err').textContent='';
+    crypto.subtle.importKey('raw',new TextEncoder().encode(pw),{name:'PBKDF2'},false,['deriveKey'])
+      .then(function(base){ return crypto.subtle.deriveKey({name:'PBKDF2',salt:SALT,iterations:ITER,hash:'SHA-256'},base,{name:'AES-GCM',length:256},true,['decrypt']); })
+      .then(function(k){
+        return fetch('pages/check.enc',{cache:'no-store'}).then(function(r){return r.arrayBuffer();}).then(function(buf){
+          return crypto.subtle.decrypt({name:'AES-GCM',iv:new Uint8Array(buf,0,12)},k,new Uint8Array(buf,12)).then(function(){
+            return crypto.subtle.exportKey('raw',k);
+          });
+        });
+      })
+      .then(function(raw){ var b64=btoa(String.fromCharCode.apply(null,new Uint8Array(raw))); nav(b64); })
+      .catch(function(){ go.disabled=false; document.getElementById('pw').select(); document.getElementById('err').textContent='密码不正确，请重试'; });
+  });
+})();
+</script>
+</body></html>
