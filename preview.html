@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>在线预览</title>
+<style>
+html,body{margin:0;height:100%;font-family:-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;background:#eef1f6;color:#1f2d3d}
+.bar{display:flex;align-items:center;gap:12px;padding:10px 16px;background:#fff;border-bottom:1px solid #e3e9f2;flex-wrap:wrap}
+.bar .tt{font-size:14px;font-weight:600}
+.bar .meta{font-size:12px;color:#8b98ab}
+.bar .sp{flex:1}
+.bar button,.bar a.b{border:1px solid #cdd8e6;cursor:pointer;font-family:inherit;font-size:13px;border-radius:6px;padding:7px 14px;background:#fff;color:#39506e;text-decoration:none}
+.bar a.b.pri{background:#1f5fbf;border-color:#1f5fbf;color:#fff}
+.wrap{height:calc(100% - 53px)}
+iframe{width:100%;height:100%;border:0;background:#fff;display:block}
+</style></head>
+<body>
+<div class="bar">
+  <span class="tt" id="tt">在线预览</span>
+  <span class="meta" id="meta"></span>
+  <span class="sp"></span>
+  <a class="b pri" id="open" target="_blank" rel="noopener">新窗口打开</a>
+  <a class="b" id="dlpdf" download>下载 PDF</a>
+  <a class="b" id="dldoc" download>下载 Word</a>
+  <a class="b" href="./index.html">返回目录</a>
+</div>
+<div class="wrap"><iframe id="fr" title="文档预览"></iframe></div>
+<script>
+(function(){
+  var q=new URLSearchParams(location.search);
+  var f=q.get('f'), w=q.get('w'), t=q.get('t')||'在线预览', m=q.get('m')||'';
+  document.getElementById('tt').textContent=t;
+  document.getElementById('meta').textContent=m;
+  document.title=t;
+  if(!f){ document.getElementById('tt').textContent='缺少文档参数'; return; }
+  document.getElementById('fr').src=f+'#view=FitH';
+  var o=document.getElementById('open'); o.href=f;
+  var p=document.getElementById('dlpdf'); p.href=f; p.setAttribute('download',(q.get('fn')||'文档')+'.pdf');
+  var d=document.getElementById('dldoc'); d.href=w||f; d.setAttribute('download',(q.get('fn')||'文档')+'.docx');
+})();
+</script>
+</body></html>
