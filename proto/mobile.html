@@ -1,0 +1,1582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>扬子江药业 移动审批原型</title>
+<style>
+:root {
+  --primary: #1a3f6f;
+  --accent: #2f7cf6;
+  --accent-soft: #eaf2ff;
+  --success: #21a366;
+  --success-soft: #e8f7ef;
+  --warning: #f08c00;
+  --warning-soft: #fff4e5;
+  --danger: #e5484d;
+  --danger-soft: #fdecec;
+  --text: #1d2433;
+  --text-2: #5b6576;
+  --text-3: #98a1b0;
+  --line: #eef0f4;
+  --bg: #f4f6fa;
+  --card: #ffffff;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
+  color: var(--text); background: #e9edf3; font-size: 14px; line-height: 1.5;
+}
+button { font-family: inherit; border: 0; background: none; cursor: pointer; color: inherit; }
+
+/* ===== 桌面演示外壳：左侧目录 + 手机框 ===== */
+.stage { display: flex; justify-content: center; align-items: flex-start; gap: 48px; padding: 32px 24px; min-height: 100%; }
+.side { width: 300px; padding-top: 8px; }
+.side h1 { font-size: 20px; color: var(--primary); margin-bottom: 6px; }
+.side .sub { font-size: 12px; color: var(--text-2); margin-bottom: 22px; line-height: 1.8; }
+.side h2 { font-size: 12px; color: var(--text-3); font-weight: 500; margin: 18px 0 8px; letter-spacing: 1px; }
+.dir a { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; margin-bottom: 6px; border-radius: 8px; background: #fff; color: var(--text); text-decoration: none; font-size: 13px; border: 1px solid transparent; cursor: pointer; }
+.dir a:hover { border-color: #cfe0ff; }
+.dir a.on { border-color: var(--accent); color: var(--accent); }
+.dir a small { color: var(--text-3); font-size: 11px; }
+.side .rule { font-size: 12px; color: var(--text-2); line-height: 1.9; background: #fff; border-radius: 8px; padding: 12px 14px; }
+.side .rule b { color: var(--text); font-weight: 600; }
+.side .reset { margin-top: 10px; font-size: 12px; color: var(--accent); }
+.phone { width: 390px; height: 844px; border-radius: 46px; background: #10141c; padding: 12px; box-shadow: 0 30px 60px rgba(26,63,111,.18); flex-shrink: 0; position: sticky; top: 24px; }
+.screen { width: 100%; height: 100%; border-radius: 36px; overflow: hidden; background: var(--bg); position: relative; display: flex; flex-direction: column; }
+.statusbar { height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 28px; font-size: 14px; font-weight: 600; background: var(--card); }
+.statusbar i { display: inline-block; width: 24px; height: 11px; border: 1.5px solid var(--text); border-radius: 3px; position: relative; }
+.statusbar i::after { content: ""; position: absolute; left: 1.5px; top: 1.5px; bottom: 1.5px; width: 70%; background: var(--text); border-radius: 1px; }
+.mdir { display: none; }
+@media (max-width: 760px) {
+  body { background: var(--bg); }
+  .stage { padding: 0; display: block; }
+  .side { display: none; }
+  .phone { width: 100%; height: 100vh; height: 100dvh; border-radius: 0; padding: 0; box-shadow: none; position: static; }
+  .screen { border-radius: 0; }
+  .statusbar { display: none; }
+  .mdir { display: block; }
+}
+
+/* ===== 通用 ===== */
+.view { position: absolute; inset: 0; display: flex; flex-direction: column; background: var(--bg); }
+.view[hidden] { display: none; }
+.navbar { height: 48px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; position: relative; background: var(--card); font-size: 17px; font-weight: 600; }
+.mdir { position: absolute; right: 10px; top: 9px; }
+.mdir select { height: 30px; border: 1px solid var(--line); border-radius: 15px; padding: 0 8px; font-size: 12px; color: var(--text-2); background: #fff; max-width: 110px; }
+.scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.scroll::-webkit-scrollbar { width: 0; }
+.pill { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 11px; font-size: 12px; font-weight: 500; white-space: nowrap; }
+
+/* ===== 详情 ===== */
+.hero { background: linear-gradient(160deg, #1a3f6f 0%, #24548f 100%); color: #fff; padding: 16px 18px 26px; }
+.hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.hero-type { font-size: 13px; opacity: .85; }
+.hero .pill.wait { background: rgba(255,170,40,.18); color: #ffc46b; }
+.hero .pill.ok { background: rgba(60,210,140,.18); color: #7be2b0; }
+.hero .pill.back { background: rgba(255,100,100,.18); color: #ff9c9c; }
+.hero-name { font-size: 19px; font-weight: 600; line-height: 1.45; }
+.hero-code { font-size: 12px; opacity: .7; margin-top: 4px; }
+.hero-sec { display: inline-block; margin-top: 8px; padding: 2px 10px; border-radius: 11px; background: rgba(255,255,255,.16); font-size: 12px; font-weight: 600; }
+/* 重点信息：取自本页 PC 字段，标签与取值不改写 */
+.keys { margin: -14px 12px 0; background: var(--card); border-radius: 14px; padding: 14px 16px 6px; position: relative; box-shadow: 0 6px 18px rgba(26,63,111,.06); display: grid; grid-template-columns: 1fr 1fr; column-gap: 14px; }
+.key { padding-bottom: 10px; min-width: 0; }
+.key.full { grid-column: 1 / -1; }
+.key span { display: block; font-size: 12px; color: var(--text-3); }
+.key b { display: block; font-size: 15px; font-weight: 600; color: var(--text); margin-top: 2px; word-break: break-all; line-height: 1.4; }
+.key.hl b { color: var(--accent); font-size: 17px; }
+/* 单列重点信息：每个字段一行、左对齐、浅色分割线 */
+.keys-1 { display: block; padding-top: 10px; }
+.keys-1 .key { padding: 10px 0 11px; border-top: 1px solid var(--line); }
+.keys-1 .key:first-child { border-top: 0; padding-top: 2px; }
+.keys-1 .key span { font-size: 12px; }
+.keys-1 .key b { text-align: left; margin-top: 3px; }
+.sec { margin: 12px 12px 0; background: var(--card); border-radius: 14px; padding: 4px 16px 6px; }
+.sec-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 13px 0 9px; font-size: 15px; font-weight: 600; }
+.sec-h small { font-size: 12px; color: var(--text-3); font-weight: 400; text-align: right; }
+/* 默认收起的区块（如成交明细）：点标题展开 */
+.sec-fold .fold-body { display: none; }
+.sec-fold.open .fold-body { display: block; }
+.fold-h { cursor: pointer; align-items: center; }
+.fold-h > span { flex: 1; min-width: 0; }
+.fold-h > small { flex: none; }
+.fold-arr { width: 7px; height: 7px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: rotate(45deg); transition: transform .2s; margin: -3px 2px 0 8px; flex-shrink: 0; }
+.sec-fold.open .fold-arr { transform: rotate(-135deg); margin-top: 3px; }
+.sub-h { font-size: 14px; font-weight: 600; color: var(--text); padding: 12px 0 6px; border-top: 1px solid var(--line); }
+.sub-h small { font-size: 12px; color: var(--text-3); font-weight: 400; margin-left: 6px; }
+.sec-h + .sub-h { border-top: 0; padding-top: 0; }
+.kv { display: flex; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.sec-h + .kv, .sub-h + .kv, .note + .kv, .kv:first-child { border-top: 0; }
+.kv > span { width: 112px; flex-shrink: 0; color: var(--text-3); }
+.kv > b { flex: 1; font-weight: 400; color: var(--text); text-align: right; word-break: break-all; }
+.kv > b em { display: block; font-style: normal; font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.note { font-size: 12px; color: var(--text-2); background: #f7f9fc; border-radius: 8px; padding: 9px 11px; margin: 4px 0 10px; line-height: 1.7; }
+.note.warn { background: var(--warning-soft); color: #a45a00; }
+.empty-v { color: var(--text-3); font-size: 13px; padding: 4px 0 12px; }
+/* 表格行 → 卡片：第一行为主列，其余列逐项「列名：值」 */
+.rc { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.rc-h { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.rc-no { align-self: flex-start; margin-top: 2px; min-width: 22px; height: 22px; border-radius: 6px; background: #f0f2f6; color: var(--text-2); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 0 4px; }
+.rc-t { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; }
+.rc-t em { display: block; font-style: normal; font-size: 11px; color: var(--text-3); font-weight: 400; }
+.rc-a { font-size: 13px; color: var(--accent); flex-shrink: 0; cursor: pointer; }
+  .af-row { display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
+  .af-row.af-wide { width: 100%; justify-content: space-between; }
+  .af-row > .af-n { flex: 1 1 auto; min-width: 0; word-break: break-all; } .af-row.af-wide > .af-n { text-align: left; }
+  .af-row > .af-n.muted { color: var(--text-3); }
+  .af-row > em { width: 100%; text-align: right; }
+  .af-ops { display: inline-flex; align-items: center; gap: 12px; flex-shrink: 0; }
+  .af-ops a { font-size: 13px; color: var(--accent); cursor: pointer; }
+  .af-ops a.af-dl { color: var(--text-2); }
+.rc-f { display: flex; gap: 10px; font-size: 13px; padding: 3px 0; }
+.rc-f > span { width: 104px; flex-shrink: 0; color: var(--text-3); }
+.rc-f > b { flex: 1; font-weight: 400; text-align: right; word-break: break-all; }
+.sc-list { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; margin-bottom: 10px; }
+.sc-hd, .sc-row { display: flex; align-items: center; gap: 12px; padding: 0 12px; }
+.sc-hd { height: 32px; background: #f7f9fc; font-size: 12px; color: var(--text-3); }
+.sc-row { height: 46px; border-top: 1px solid var(--line); font-size: 14px; }
+.sc-hd span:first-child, .sc-rk { width: 28px; flex-shrink: 0; text-align: center; }
+.sc-hd span:nth-child(2), .sc-n { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sc-hd span:last-child, .sc-v { width: 72px; flex-shrink: 0; text-align: right; }
+.sc-rk { height: 24px; line-height: 24px; border-radius: 6px; background: #f0f2f6; color: var(--text-2); font-size: 12px; font-weight: 700; }
+.sc-v { font-size: 17px; font-weight: 700; color: var(--text); }
+.sc-row.first .sc-rk { background: var(--accent); color: #fff; }
+.sc-row.first .sc-v { color: var(--accent); }
+.st-ok { color: var(--success); } .st-no { color: var(--danger); } .st-warn { color: var(--warning); } .st-muted { color: var(--text-3); }
+.doc { border: 1px solid var(--line); border-radius: 10px; padding: 16px; margin-bottom: 10px; font-size: 13px; line-height: 2; color: var(--text); background: #fffdf8; }
+.doc .t { text-align: center; font-size: 17px; font-weight: 700; margin-bottom: 8px; }
+.doc .b { font-weight: 600; }
+.doc .i { text-indent: 2em; }
+.doc .r { text-align: right; }
+.doc-h { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; padding: 8px 12px; background: #fafafa; border: 1px solid var(--line); border-bottom: 0; border-radius: 10px 10px 0 0; }
+.doc-h + .doc { border-radius: 0 0 10px 10px; }
+.doc-h small { color: #d46b08; font-size: 11px; text-align: right; }
+/* 长文本预览弹层（邀请函等） */
+.doc-scroll { max-height: 58vh; overflow-y: auto; -webkit-overflow-scrolling: touch; margin-bottom: 14px; }
+.doc-scroll .doc { margin-bottom: 0; }
+/* 审批进度（页面最下方，默认折叠） */
+.prog { margin: 12px 12px 0; background: var(--card); border-radius: 14px; padding: 14px 16px; }
+.prog-h { display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.prog-h b { font-size: 15px; }
+.prog-h span { font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+.prog-h span::after { content: ""; width: 6px; height: 6px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: rotate(45deg); margin-top: -3px; transition: transform .2s; }
+.prog.open .prog-h span::after { transform: rotate(-135deg); margin-top: 3px; }
+.prog-bar { display: flex; gap: 3px; margin: 12px 0 10px; }
+.prog-bar i { flex: 1; height: 4px; border-radius: 2px; background: #e6e9ef; }
+.prog-bar i.done { background: var(--accent); }
+.prog-bar i.doing { background: var(--warning); }
+.prog-bar i.reject { background: var(--danger); }
+.prog-cur { font-size: 13px; color: var(--text-2); display: flex; justify-content: space-between; gap: 8px; }
+.prog-cur b { color: var(--warning); font-weight: 600; text-align: right; }
+.prog-cur.ok b { color: var(--success); }
+.prog-cur.back b { color: var(--danger); }
+.prog-body { display: none; border-top: 1px solid var(--line); margin-top: 12px; padding-top: 6px; }
+.prog.open .prog-body { display: block; }
+.tl { padding: 10px 0 0; }
+.tl-i { display: flex; gap: 12px; position: relative; padding-bottom: 16px; }
+.tl-i:last-child { padding-bottom: 0; }
+.tl-i:not(:last-child)::before { content: ""; position: absolute; left: 9px; top: 22px; bottom: 0; width: 2px; background: var(--line); }
+.tl-i.done:not(:last-child)::before { background: #bcd4fb; }
+.tl-dot { width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+.tl-i.done .tl-dot { background: var(--accent); }
+.tl-i.done .tl-dot::after { content: ""; width: 7px; height: 4px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg); margin-top: -2px; }
+.tl-i.doing .tl-dot { border: 2px solid var(--warning); background: #fff; }
+.tl-i.doing .tl-dot::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--warning); }
+.tl-i.reject .tl-dot { background: var(--danger); }
+.tl-i.reject .tl-dot::after { content: ""; width: 8px; height: 2px; background: #fff; }
+.tl-i.todo .tl-dot { border: 2px solid #d5dae2; background: #fff; }
+.tl-i.cc .tl-dot { background: var(--accent-soft); }
+.tl-i.cc .tl-dot::after { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.tl-b { flex: 1; min-width: 0; }
+.tl-r { display: flex; justify-content: space-between; align-items: center; }
+.tl-r b { font-size: 14px; font-weight: 600; }
+.tl-i.todo .tl-r b { color: var(--text-3); font-weight: 500; }
+.tl-r small { font-size: 12px; color: var(--text-3); }
+.tl-n { font-size: 13px; color: var(--text-2); margin-top: 2px; }
+.tl-i.todo .tl-n { color: var(--text-3); }
+.tl-o { margin-top: 6px; background: #f7f9fc; border-radius: 8px; padding: 7px 10px; font-size: 13px; color: var(--text-2); }
+.tl-o.reject { background: var(--danger-soft); color: #b32a2e; }
+.pad-bottom { height: 96px; }
+.actbar { flex-shrink: 0; display: flex; gap: 12px; padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); background: var(--card); box-shadow: 0 -4px 14px rgba(26,63,111,.05); }
+.actbar button { height: 46px; border-radius: 12px; font-size: 16px; font-weight: 600; }
+.actbar .more { flex: none; width: 64px; background: #f2f4f8; color: var(--text-2); font-size: 15px; font-weight: 500; }
+.actbar .no { flex: 1; background: #f2f4f8; color: var(--text); }
+.actbar .yes { flex: 2; background: var(--accent); color: #fff; }
+.actbar[hidden] { display: none; }
+
+/* ===== 底部弹层 ===== */
+.mask { position: absolute; inset: 0; background: rgba(16,20,28,.45); z-index: 50; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.mask.on { opacity: 1; pointer-events: auto; }
+.sheet { position: absolute; left: 0; right: 0; bottom: 0; z-index: 51; background: var(--card); border-radius: 20px 20px 0 0; padding: 8px 18px calc(16px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .25s ease; }
+.sheet.on { transform: translateY(0); }
+.sheet .grip { width: 36px; height: 4px; border-radius: 2px; background: #dde1e8; margin: 0 auto 12px; }
+.sheet h3 { font-size: 17px; text-align: center; margin-bottom: 4px; }
+.sheet .s-sub { font-size: 12px; color: var(--text-3); text-align: center; margin-bottom: 16px; }
+.sheet label.t { display: block; font-size: 13px; color: var(--text-2); margin-bottom: 8px; }
+.sheet label.t i { color: var(--danger); font-style: normal; margin-right: 2px; }
+.seg { display: flex; background: #f2f4f8; border-radius: 10px; padding: 3px; margin-bottom: 14px; }
+.seg button { flex: 1; height: 34px; border-radius: 8px; font-size: 14px; color: var(--text-2); }
+.seg button.on { background: #fff; color: var(--text); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+.sheet textarea { width: 100%; height: 96px; border: 1px solid #e3e7ee; border-radius: 10px; padding: 10px 12px; font: inherit; font-size: 15px; resize: none; outline: none; color: var(--text); }
+.sheet textarea:focus { border-color: var(--accent); }
+.quick { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 18px; }
+.quick button { height: 28px; padding: 0 10px; border-radius: 14px; background: #f2f4f8; font-size: 12px; color: var(--text-2); }
+.sheet .submit { width: 100%; height: 46px; border-radius: 12px; font-size: 16px; font-weight: 600; background: var(--accent); color: #fff; }
+.sheet .submit.red { background: var(--danger); }
+.sheet .cancel { width: 100%; height: 46px; border-radius: 12px; font-size: 16px; background: #f2f4f8; color: var(--text); margin-top: 14px; }
+.acts { border-top: 1px solid var(--line); margin-top: 8px; }
+.act-i { display: flex; align-items: center; gap: 12px; width: 100%; padding: 14px 2px; border-bottom: 1px solid var(--line); text-align: left; }
+.act-ic { width: 38px; height: 38px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; flex-shrink: 0; }
+.act-t b { display: block; font-size: 15px; font-weight: 600; color: var(--text); }
+.act-t small { display: block; font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.pos-tip { font-size: 12px; color: var(--text-3); margin: -6px 0 14px; line-height: 1.6; }
+.people { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.people button { height: 32px; padding: 0 12px; border-radius: 16px; background: #f2f4f8; font-size: 13px; color: var(--text-2); border: 1px solid transparent; }
+.people button small { font-size: 11px; opacity: .7; margin-left: 4px; }
+.people button.on { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+/* 选人控件 + 组织架构选择 */
+.sel-field { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-height: 40px; border: 1px solid #e3e7ee; border-radius: 10px; padding: 8px 12px; background: #f7f9fc; cursor: pointer; }
+.sel-field span { font-size: 14px; color: var(--text-3); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sel-field span.has { color: var(--text); }
+.sel-arr { width: 7px; height: 7px; border-right: 1.5px solid var(--text-3); border-bottom: 1.5px solid var(--text-3); transform: rotate(45deg); margin-top: -3px; flex-shrink: 0; }
+.sel-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+        .ord-list { margin: 4px 0 0; }
+        .ord-row { display: flex; align-items: center; gap: 10px; padding: 11px 2px; border-bottom: 1px solid var(--line); }
+        .ord-row:last-child { border-bottom: 0; }
+        .ord-no { flex: none; width: 22px; height: 22px; border-radius: 50%; background: #eef3fb; color: var(--accent); font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+        .ord-nm { flex: 1; font-size: 15px; color: var(--text); }
+        .ord-ops { flex: none; display: flex; gap: 6px; }
+        .ord-op { width: 34px; height: 30px; border-radius: 8px; background: #f2f4f8; color: var(--text-2); font-size: 13px; }
+        .ord-op[disabled] { opacity: .35; }
+
+.sel-chip { display: inline-flex; align-items: center; gap: 4px; height: 28px; padding: 0 8px 0 10px; border-radius: 14px; background: var(--accent-soft); color: var(--accent); font-size: 12px; }
+.sel-chip b { font-weight: 500; }
+.sel-chip i { font-style: normal; cursor: pointer; opacity: .65; padding: 0 3px; }
+.org-depts { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.org-depts button { height: 26px; padding: 0 10px; border-radius: 13px; background: #f2f4f8; font-size: 12px; color: var(--text-2); }
+.org-depts button.on { background: var(--accent-soft); color: var(--accent); }
+.org-list { max-height: 44vh; overflow-y: auto; -webkit-overflow-scrolling: touch; border-top: 1px solid var(--line); }
+.org-row { display: flex; align-items: center; gap: 10px; padding: 10px 2px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.org-chk { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #cfd6e0; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.org-row.on .org-chk { background: var(--accent); border-color: var(--accent); }
+.org-row.on .org-chk::after { content: ''; width: 9px; height: 5px; border-left: 2px solid #fff; border-bottom: 2px solid #fff; transform: rotate(-45deg); margin-top: -2px; }
+.org-name { font-size: 14px; font-weight: 600; }
+.org-meta { font-size: 12px; color: var(--text-3); margin-left: auto; text-align: right; }
+.org-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 10px; font-size: 12px; color: var(--text-3); }
+
+/* ===== 成交明细（大数据量） ===== */
+.dl-tools { display: flex; flex-direction: column; gap: 8px; margin: 4px 0 6px; }
+.dl-q { height: 36px; border: 1px solid #e3e7ee; border-radius: 9px; padding: 0 12px; font: inherit; font-size: 14px; outline: none; background: #f7f9fc; color: var(--text); }
+.dl-q:focus { border-color: var(--accent); background: #fff; }
+.dl-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.dl-chips button { height: 28px; padding: 0 10px; border-radius: 14px; background: #f2f4f8; color: var(--text-2); font-size: 12px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-chips button.on { background: var(--accent-soft); color: var(--accent); }
+.dl-sum { font-size: 12px; color: var(--text-3); padding: 4px 0 6px; }
+.dl-sum b { color: var(--text); }
+.dl-row { border-top: 1px solid var(--line); padding: 9px 0; cursor: pointer; }
+.dl-srow { display: flex; align-items: baseline; gap: 8px; font-size: 12px; color: var(--text-2); padding: 4px 0 4px 10px; border-left: 2px solid #eaeef6; margin-top: 4px; }
+.dl-sn { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-sq { color: var(--text-3); white-space: nowrap; }
+.dl-sa { color: var(--text); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dl-main { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.dl-name { font-size: 14px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-amt { font-size: 14px; font-weight: 600; color: var(--text); flex-shrink: 0; }
+.dl-meta { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.dl-more { display: none; margin-top: 6px; font-size: 12px; color: var(--text-2); background: #f7f9fc; border-radius: 8px; padding: 7px 10px; line-height: 1.8; }
+.dl-row.open .dl-more { display: block; }
+.dl-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 0 2px; font-size: 12px; color: var(--text-3); flex-wrap: wrap; }
+.dl-btn { height: 32px; padding: 0 12px; border-radius: 16px; background: var(--accent-soft); color: var(--accent); font-size: 13px; flex-shrink: 0; }
+.dl-mode { display: flex; background: #f2f4f8; border-radius: 10px; padding: 3px; margin: 6px 0 10px; }
+.dl-mode button { flex: 1; height: 32px; border-radius: 8px; font-size: 13px; color: var(--text-2); }
+.dl-mode button.on { background: #fff; color: var(--text); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+/* 7补.291 多标段 tab：胶囊样式，与明细视图的分段控件区分 */
+.dl-mode.sec-tabs { background: none; padding: 0; gap: 8px; margin: 2px 0 12px; }
+.dl-mode.sec-tabs button { flex: 0 0 auto; height: 30px; padding: 0 14px; border-radius: 15px; background: #f2f4f8; font-size: 13px; }
+.dl-mode.sec-tabs button.on { background: #e8f1ff; color: #1a6fd4; box-shadow: none; }
+.dl-sup { border-top: 1px solid var(--line); padding: 10px 0 4px; cursor: pointer; }
+.dl-sup-main { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.dl-sup-name { font-size: 14px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dl-sup-amt { font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.dl-sup-meta { display: flex; justify-content: space-between; gap: 10px; font-size: 12px; color: var(--text-3); margin-top: 3px; }
+.dl-sup-open { margin-top: 8px; border-top: 1px dashed var(--line); padding-top: 2px; cursor: default; }
+
+/* ===== 结果页 ===== */
+.result { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 72px 32px 0; background: var(--card); text-align: center; }
+.result .ic { width: 72px; height: 72px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.result .ic::after { content: ""; width: 26px; height: 14px; border-left: 4px solid #fff; border-bottom: 4px solid #fff; transform: rotate(-45deg); margin-top: -8px; }
+.result .ic.red { background: var(--danger); }
+.result .ic.red::after { width: 26px; height: 4px; border: 0; background: #fff; transform: none; margin: 0; }
+.result h2 { font-size: 21px; margin-bottom: 8px; }
+.result p { font-size: 14px; color: var(--text-2); line-height: 1.8; }
+.result .btns { display: flex; gap: 12px; margin-top: 36px; width: 100%; }
+.result .btns button { flex: 1; height: 44px; border-radius: 12px; font-size: 15px; font-weight: 600; background: var(--accent); color: #fff; }
+
+/* ===== 明细表格（明细行数多时用表格，替代逐条卡片） ===== */
+.qf-body { display: none; border-top: 1px dashed var(--line); }
+.qf-body.on { display: block; }
+.qf-row { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px dashed #eef0f4; font-size: 13px; }
+.qf-row:last-child { border-bottom: 0; }
+.qf-n { color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qf-v { color: var(--text-2); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.gt-wrap { border: 1px solid var(--line); border-radius: 10px; background: #fff; max-height: 60vh; overflow: auto; -webkit-overflow-scrolling: touch; }
+.gt { border-collapse: separate; border-spacing: 0; font-size: 13px; width: 100%; }
+.gt th, .gt td { padding: 9px 10px; white-space: nowrap; text-align: left; }
+.gt thead th { position: sticky; top: 0; z-index: 3; background: #f4f6fa; color: var(--text-2); font-weight: 600; font-size: 12px; border-bottom: 1px solid var(--line); }
+.gt tbody td { border-bottom: 1px solid #f4f5f8; color: var(--text); }
+.gt tbody tr:last-child td { border-bottom: 0; }
+.gt tbody tr:nth-child(even) td { background: #fafbfd; }
+.gt th:first-child, .gt td:first-child { position: sticky; left: 0; z-index: 2; background: #fff; box-shadow: 6px 0 8px -6px rgba(0,0,0,.18); }
+.gt thead th:first-child { z-index: 4; background: #f4f6fa; }
+.gt tbody tr:nth-child(even) td:first-child { background: #fafbfd; }
+.gt .num { text-align: right; font-variant-numeric: tabular-nums; }
+.gt-tip { display: flex; justify-content: space-between; gap: 10px; font-size: 11px; color: var(--text-3); padding: 6px 2px 0; }
+/* 7补.258 候选单位：逐家折叠，展开后按子项目展示定标信息 */
+.acc-item { border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 8px; overflow: hidden; }
+.acc-item:last-child { margin-bottom: 0; }
+.acc-hd { display: flex; align-items: center; gap: 8px; padding: 12px; cursor: pointer; }
+.acc-rk { width: 20px; height: 20px; flex: none; border-radius: 50%; background: #eef1f6; color: var(--text-2); font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+.acc-rk.win { background: var(--success-soft); color: var(--success); }
+.acc-n { flex: 1; min-width: 0; font-size: 14px; font-weight: 600; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-tag { flex: none; font-size: 11px; color: var(--success); background: var(--success-soft); border-radius: 3px; padding: 1px 6px; }
+.acc-tag.muted { color: var(--text-3); background: #f2f3f5; }
+.acc-tag.warn { color: var(--warning); background: var(--warning-soft); }
+.acc-tag.no { color: var(--danger); background: var(--danger-soft); }
+.acc-v { flex: none; font-size: 13px; color: var(--text); font-variant-numeric: tabular-nums; }
+/* 7补.273 候选单位明细：行内补含税总价（按子项目合计），标签在上、金额在下以节省横向空间 */
+.acc.price-mode .acc-hd { gap: 6px; padding: 12px 10px 12px 12px; }
+.acc-price { flex: none; display: inline-flex; flex-direction: column; align-items: flex-end; line-height: 1.15; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.acc-price i { font-style: normal; font-size: 10px; color: var(--text-3); }
+.acc-price b { font-size: 12.5px; font-weight: 600; color: var(--text); }
+.acc-bd { display: none; padding: 0 12px 12px; }
+.acc-item.open .acc-bd { display: block; }
+.acc-item.open .fold-arr { transform: rotate(180deg); }
+.acc-sub { border-top: 1px dashed var(--line); padding-top: 8px; margin-top: 4px; }
+.acc-sub-h { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+
+.toast { position: absolute; left: 50%; top: 45%; transform: translate(-50%, -50%); background: rgba(16,20,28,.82); color: #fff; font-size: 14px; padding: 10px 18px; border-radius: 10px; z-index: 99; opacity: 0; pointer-events: none; transition: opacity .2s; max-width: 80%; text-align: center; }
+.toast.on { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <aside class="side">
+    <h1>移动审批原型</h1>
+    <div class="sub">招投标系统中全部带审批流程的页面，提供手机端审批页面。页面字段与电脑端对应节点一致，审批人在手机上查看后直接同意或退回。</div>
+    <h2>审批页面</h2>
+    <div class="dir" id="dir"></div>
+    <h2>设计要点</h2>
+    <div class="rule">
+      <b>字段一致：</b>各审批页的区块、字段名称、取值和说明文字均取自电脑端对应节点页面，不改写（同页重复字段只在顶部展示一次）；表格按行转为卡片，每列以「列名：值」逐项展示。<br>
+      <b>重点置顶：</b>页面顶部汇总本页最关键的几项字段（中标人、金额、关键时间等），一眼可见；同一页面不重复展示，已在顶部展示的字段下方区块不再列出。<br>
+      <b>进度在下：</b>审批进度放在页面最下方，默认折叠为一行（当前节点 + 分段进度条），点击展开查看审批流程与逐节点记录。<br>
+      <b>操作简单：</b>底部固定「更多」「退回」「同意」，意见支持常用语一键填入，退回必须填写原因。<br><b>更多操作：</b>「更多」中提供加签（弹层内选前加签 / 后加签，可多选加签人）、转交（转给他人办理，转交后我不再审批）、抄送（被抄送人只能查看、不能操作，不影响审批流程），各类操作记录均显示在审批进度中。
+    </div>
+    <button class="reset" onclick="resetDemo()">重置演示状态</button>
+  </aside>
+
+  <div class="phone">
+    <div class="screen" id="screen">
+      <div class="statusbar"><span>9:41</span><i></i></div>
+      <div style="flex:1;position:relative">
+
+        <!-- 审批单 -->
+        <section class="view" id="vDetail">
+          <div class="navbar"><span id="dTitle">审批</span><div class="mdir"><select id="mdir"></select></div></div>
+          <div class="scroll" id="dScroll"><div id="dBody"></div><div class="pad-bottom"></div></div>
+          <div class="actbar" id="actbar">
+            <button class="more" onclick="openMore()">更多</button>
+            <button class="no" onclick="openSheet('back')">退回</button>
+            <button class="yes" onclick="openSheet('ok')">同意</button>
+          </div>
+        </section>
+
+        <!-- 结果 -->
+        <section class="view" id="vResult" hidden>
+          <div class="result">
+            <div class="ic" id="rIc"></div>
+            <h2 id="rTitle"></h2>
+            <p id="rText"></p>
+            <div class="btns"><button onclick="showDetail(_cur)">查看审批单</button></div>
+          </div>
+        </section>
+
+        <div class="mask" id="mask" onclick="closeSheet()"></div>
+        <div class="sheet" id="sheet">
+          <div class="grip"></div>
+          <h3 id="sTitle">同意</h3>
+          <div class="s-sub" id="sSub"></div>
+          <div id="sBackTo">
+            <label class="t">退回至</label>
+            <div class="seg" id="seg"><button data-v="init" class="on">发起人</button><button data-v="prev">上一节点</button></div>
+          </div>
+          <label class="t" id="sLabel">审批意见</label>
+          <textarea id="sText" placeholder="请输入审批意见（选填）"></textarea>
+          <div class="quick" id="quick"></div>
+          <button class="submit" id="sBtn" onclick="submitSheet()">确认同意</button>
+        </div>
+        <div class="sheet" id="moreSheet">
+          <div class="grip"></div>
+          <h3>更多操作</h3>
+          <div class="acts">
+            <button class="act-i" onclick="openPick('sign')"><span class="act-ic">签</span><span class="act-t"><b>加签</b></span></button>
+            <button class="act-i" onclick="openPick('transfer')"><span class="act-ic">转</span><span class="act-t"><b>转交</b></span></button>
+            <button class="act-i" onclick="openPick('copy')"><span class="act-ic">抄</span><span class="act-t"><b>抄送</b></span></button>
+          </div>
+          <button class="cancel" onclick="closeSheet()">取消</button>
+        </div>
+        <div class="sheet" id="pickSheet">
+          <div class="grip"></div>
+          <h3 id="pTitle">加签</h3>
+          <div class="s-sub" id="pSub"></div>
+          <div id="pPos" style="display:none">
+            <label class="t">加签方式</label>
+            <div class="seg" id="pSeg"><button data-v="before" class="on">前加签 · 在我之前</button><button data-v="after">后加签 · 在我之后</button></div>
+            <div class="pos-tip" id="pTip"></div>
+          </div>
+          <label class="t" id="pLabel"><i>*</i>加签人</label>
+          <div class="sel-field" id="pSelField"><span id="pSelText">请选择人员</span><i class="sel-arr"></i></div>
+          <div class="sel-chips" id="pSelChips"></div>
+          <label class="t" id="pTLabel">加签说明</label>
+          <textarea id="pText" style="height:72px" placeholder="请输入说明（选填）"></textarea>
+          <button class="submit" id="pBtn" style="margin-top:18px" onclick="submitPick()">确认加签</button>
+        </div>
+        <div class="sheet" id="confirmSheet">
+          <div class="grip"></div>
+          <h3 id="cfTitle">确认转交</h3>
+          <div class="s-sub" id="cfSub"></div>
+          <button class="submit" id="cfOk">确认转交</button>
+          <button class="cancel" onclick="closeSheet()">取消</button>
+        </div>
+                <div class="sheet" id="ordSheet">
+          <div class="grip"></div>
+          <h3 id="ordTitle">设置审核顺序</h3>
+          <div class="ord-list" id="ordList"></div>
+          <button class="submit" style="margin-top:18px" onclick="ordConfirm()">确认加签</button>
+          <button class="cancel" onclick="closeSheet()">取消</button>
+        </div>
+<div class="sheet" id="orgSheet">
+          <div class="grip"></div>
+          <h3>选择人员</h3>
+          <div class="s-sub">组织架构 · 可多选</div>
+          <input id="orgQ" class="dl-q" placeholder="搜索姓名 / 部门" style="margin-bottom:8px">
+          <div class="org-depts" id="orgDepts"></div>
+          <div class="org-list" id="orgList"></div>
+          <div class="org-foot"><span id="orgCount">已选 0 人</span><span style="display:flex;gap:8px"><button class="dl-btn" onclick="closeOrg()">取消</button><button class="dl-btn" style="background:var(--accent);color:#fff" onclick="orgConfirm()">确定</button></span></div>
+        </div>
+        <div class="sheet" id="docSheet">
+          <div class="grip"></div>
+          <h3 id="docTitle">邀请函</h3>
+          <div class="s-sub" id="docSub"></div>
+          <div class="doc-scroll" id="docBody"></div>
+          <button class="cancel" onclick="closeSheet()">关闭</button>
+        </div>
+        <div class="toast" id="toast"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== 演示数据：区块、字段名称、取值、说明文字均取自电脑端原型对应节点页面 =====
+// 区块元素：kv 字段 / note 说明 / table 表格（行转卡片）/ files 文件 / doc 通知书正文 / empty 无数据
+var P_ENG = { name: '冻干制剂车间二期土建及机电安装工程', code: 'YZJ-GC-2026-10-012', biz: '工程设备类', way: '公开招标' };
+var P_MAT = { name: '2026年四季度原辅料（微晶纤维素）集中采购', code: 'YZJ-WZ-2026-10-038', biz: '物资采购类', way: '公开招标' };
+var P_INV = { name: '注射剂车间在线尘埃粒子监测系统采购（涉密）', code: 'YZJ-YQ-2026-10-003', biz: '工程设备类', way: '邀请招标' };
+var CHAIN4 = [['经办部门主管', '陈主管'], ['经办部门负责人', '赵负责人'], ['监管部门', '审计部·钱部长'], ['招标中心领导', '孙主任']];
+var TECH_TABLE = {
+  cols: ['序号', '投标人', '技术标得分', '排名'], main: 1, score: 1,
+  rows: [
+    ['1', '泰州建设工程有限公司', '92.5', '1'],
+    ['2', '南京恒通机电有限公司', '88.0', '2'],
+    ['3', '苏州恒达机械有限公司', '85.5', '3'],
+    ['4', '上海华鼎机械设备有限公司', '81.0', '4'],
+    ['5', '泰州通达机电有限公司', '71.5', '5']]
+};
+var SCORE_FILES = {
+  cols: ['序号', '文件名称'], main: 1, act: '预览', hideLabel: 1,
+  rows: [
+    ['1', '冻干制剂车间二期工程_技术标评分表_汇总.pdf'],
+    ['2', '冻干制剂车间二期工程_技术标评分表_王评委.pdf'],
+    ['3', '冻干制剂车间二期工程_技术标评分表_李评委.pdf'],
+    ['4', '冻干制剂车间二期工程_技术标评分表_赵评委.pdf']]
+};
+var NOTE_ENCRYPT = '技术标评分加密：评委打分仅本人可见；打分与结果汇总在「中标人确定」节点完成前仅审核人员可查看。';
+var NOTE_SCORE_PDF = '评分表由系统根据评委在线评分自动生成 PDF：一张汇总评分表（全体评委平均分与排名）+ 每位评委一张单独评分表（仅本人给分，评委线上确认后生效）；如需纸质存档可下载打印。';
+var NOTE_SCORE_SUM = '汇总表含全体评委平均分、技术标得分与排名；评委单独表仅含本人给分与确认记录（评委打分加密，仅本人可见）。';
+var DEAL_MATERIALS = {
+  cols: ['#', '材料', '说明', '材料文件 / 上传'], main: 1,
+  rows: [
+    ['1', '招标报告', '立项申报环节的原始报告', '招标报告-冻干制剂车间二期.pdf'],
+    ['2', '评标报告', '招标中心根据评标意见完成，含推荐的合格中标候选人', '评标报告-冻干制剂车间二期.pdf'],
+    ['3', '全部单位报价', '所有投标单位的报价单（不是仅中标候选人）', '查看'],
+    ['4', '支持性文件', '商务标书附于审批流程中——电子扫描件随流转上传，纸质原件交经办部门存档（未领取的由招标中心移交集团档案管理室）', '未上传'],
+    ['5', '评标会纪要', '非必填：有评标会的附会议纪要；无评标会的直接输出结果走审批流', '系统未生成']]
+};
+var DEAL_ATTACH = { cols: ['序号', '附件名称', '上传人', '上传时间'], main: 1, act: '预览', rows: [['1', '评标报告.pdf', '张采购员', '2026-11-06 09:50:00']] };
+var NOTE_DEAL_MAT = '材料由系统自动归集：系统已生成的材料直接在本页展示，未生成的材料提供上传入口。';
+var NOTE_WN_PUB = '选择「否」在「中标通知书」节点编辑通知书，不推送用印；选择「是」须为每个中标人编辑中标通知书内容，随定标审批一并提交，「中标通知书」节点默认已编辑且不可修改，可推送用印';
+// 邀请函审批（邀请招标 / 议价采购）：邀请名单与邀请函正文，字段取自电脑端「邀请函」「谈判文件」节点
+var INV_TABLE = {
+  cols: ['序号', '投标人名称', '统一社会信用代码', '联系人', '联系方式'], main: 1,
+  rows: [
+    ['1', '泰州建设工程有限公司', '91370100MA7XXXXX01', '李经理', '138****5678'],
+    ['2', '南京恒通机电有限公司', '91370100MA3XXXXX02', '王工', '139****8765'],
+    ['3', '苏州恒达机械有限公司', '91370700MA8XXXXX04', '孙总', '186****9012'],
+    ['4', '泰州通达机电有限公司', '91370600MA5XXXXX03', '赵主任', '135****4321']]
+};
+// 邀请函正文（同电脑端邀请函节点正文口径，未填写时按议程生成）
+function invDoc(p, who, d) {
+  return '<div class="t">邀请函</div><div class="b">' + who + '：</div>' +
+    '<div class="i">扬子江药业集团有限公司拟对「' + p.name + '」（项目编号：' + p.code + '）采用邀请招标方式进行采购，贵单位符合本项目要求，特邀请贵单位参加。</div>' +
+    '<div class="i">一、邀请回复截止时间：' + d.reply + '，请在截止时间前登录平台回复是否参与。</div>' +
+    '<div class="i">二、投标文件递交截止时间：' + d.open + '；开标时间：' + d.open + '。</div>' +
+    '<div class="i">三、同意参与时须在线上传投标申请资料，经采购人审核通过后方可获取招标文件。</div>' +
+    '<div class="i">四、本邀请函内容仅限受邀单位使用，请勿向第三方泄露。</div>' +
+    '<div class="r">扬子江药业集团有限公司</div>';
+}
+// 邀请函正文（预览用，不直接铺在页面上）
+var INV_DOC = invDoc(P_INV, '泰州建设工程有限公司', { reply: '2026-10-13 17:00', open: '2026-10-14 09:30' });
+// 招标公告正文（预览用）
+var NOTICE_DOC = '<div class="t">招标公告</div><div class="b">项目编号：YZJ-GC-2026-10-012</div>' +
+  '<div class="i">扬子江药业集团有限公司就「冻干制剂车间二期土建及机电安装工程」进行公开招标，欢迎符合资格条件的投标人参加投标。</div>' +
+  '<div class="b" style="margin-top:8px">一、项目概况</div>' +
+  '<div class="i">本项目为冻干制剂车间二期土建及机电安装工程，分三个标段，具体范围详见招标文件。</div>' +
+  '<div class="b">二、投标人资格要求</div>' +
+  '<div class="i">1. 具有独立法人资格；2. 具备建筑工程施工总承包相应资质；3. 近三年无重大质量、安全事故记录。</div>' +
+  '<div class="b">三、招标文件获取</div>' +
+  '<div class="i">2026-10-12 09:00 至 2026-10-21 17:00 登录扬子江药业集团电子招标采购平台下载。</div>' +
+  '<div class="b">四、投标文件递交</div>' +
+  '<div class="i">截止时间 2026-10-21 17:00，逾期送达或不符合规定的投标文件恕不接受。</div>' +
+  '<div class="b">五、发布媒体</div>' +
+  '<div class="i">中国采购与招标网、扬子江药业集团电子招标采购平台、中国招标投标公共服务平台。</div>' +
+  '<div class="r">扬子江药业集团有限公司<br>2026年10月12日</div>';
+// 中标人确定 · 是否发布中标通知书选「是」时的通知书编辑框模板（同电脑端 _wnNoticeTpl）
+function wnTpl(p, w, amt) {
+  return '<div class="t">中标通知书</div><div class="b">' + w + '：</div>' +
+    '<div class="i">贵单位所参加的<u>' + p.name + '</u>（编号：<u>' + p.code + '</u>），经评审及定标审批，已确定贵单位为中标人，中标金额：<u>' + amt + '</u>。</div>' +
+    '<div class="b" style="margin-top:8px">特此通知</div><div class="r">扬子江药业集团有限公司<br>2026年11月06日</div>';
+}
+// 中标通知书节点 · 编辑中标通知书 / 编辑招标结果通知书弹窗默认正文
+
+// ===== 成交明细（物资类定标：上百条明细、多家成交人）=====
+// 386 条物资、6 家成交供应商（部分物资拆分给两家），用于演示大数据量与多供应商排版
+var DEAL_MATS = [['黄芪（统货）', 'kg'], ['丹参（统货）', 'kg'], ['当归（统货）', 'kg'], ['白芍（统货）', 'kg'], ['川芎（统货）', 'kg'], ['麦冬（统货）', 'kg'], ['太子参（统货）', 'kg'], ['五味子（统货）', 'kg']];
+var DEAL_SUPS = [
+  ['亳州精工药材有限公司', '王经理', 'wang@bzjg.com', '13805260001'],
+  ['青岛瑞丰机械配件有限公司', '李经理', 'li@qdrf.com', '13905180002'],
+  ['泰州华康药材有限公司', '赵经理', 'zhao@tzhk.com', '13705260003'],
+  ['南京同仁堂药业有限公司', '孙经理', 'sun@njtrt.com', '13605180004'],
+  ['苏州雷允上药业有限公司', '周经理', 'zhou@szlys.com', '13505120005'],
+  ['杭州胡庆余堂药业有限公司', '吴经理', 'wu@hqyt.com', '13405110006']
+];
+function money(n) { return n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+// 7补.258 定标审批：候选单位逐家展开，展开内容与「定标信息」同一套口径（含税金额、税额=金额-金额÷(1+税率)）
+function splitTax(amt, rate) { var n = amt / (1 + rate / 100); return [n, amt - n]; }
+var WIN_ITEMS = [
+  { n: '土建工程', budget: 6200000, rate: 9, cls: '新建类', belong: '泰州市外', dept: '装备工程部', amt: { '泰州建设工程有限公司': 5900000, '南京恒通机电有限公司': 6146087 } },
+  { n: '机电安装', budget: 3000000, rate: 9, cls: '改造、维修维保类', belong: '泰州市外', dept: '装备工程部', amt: { '泰州建设工程有限公司': 2960865, '南京恒通机电有限公司': 2973913 } }
+];
+var DEAL_ALLOC = (function () {
+  var out = [], n = 386, S = DEAL_SUPS.length;
+  for (var i = 0; i < n; i++) {
+    var m = DEAL_MATS[i % DEAL_MATS.length];
+    var code = 'WZ-' + ('000' + (i + 1)).slice(-4);
+    var demand = 60 + (i * 17) % 140;
+    var price = 3 + (i % 9) * 1.6;
+    var s = i % S, parts = [];
+    // 7补.291 成交明细按标段拆分：供应商 0-2 属 01 标段，3-5 属 02 标段
+    var grp = s < 3 ? 0 : 1;
+    if (i % 5 === 0) {
+      var qa = Math.round(demand * 0.7);
+      parts.push({ s: s, q: qa, p: price });
+      parts.push({ s: grp * 3 + ((s % 3) + 1) % 3, q: demand - qa, p: +(price * 1.03).toFixed(2) });
+    } else {
+      parts.push({ s: s, q: demand, p: price });
+    }
+    out.push({ code: code, name: m[0], unit: m[1], demand: demand, parts: parts, sec: grp, amt: parts.reduce(function (a, x) { return a + x.q * x.p; }, 0) });
+  }
+  return out;
+})();
+var DEAL_SUM = DEAL_SUPS.map(function () { return 0; });
+var DEAL_BY_SUP = DEAL_SUPS.map(function () { return []; });
+DEAL_ALLOC.forEach(function (r) {
+  r.parts.forEach(function (p) { DEAL_SUM[p.s] += p.q * p.p; });
+});
+DEAL_ALLOC.forEach(function (r) {
+  r.parts.forEach(function (p) { DEAL_BY_SUP[p.s].push({ r: r, p: p }); });
+});
+var DEAL_TOTAL = DEAL_SUM.reduce(function (a, b) { return a + b; }, 0);
+
+// 7补.291 定标审批按标段展示：每个标段一份成交明细（供应商集合互不重叠）
+var DEAL_SECS = [0, 1].map(function (sec) {
+  var rows = DEAL_ALLOC.filter(function (r) { return r.sec === sec; });
+  var sups = [], sum = {}, bySup = {};
+  rows.forEach(function (r) {
+    r.parts.forEach(function (p) {
+      if (!bySup[p.s]) { bySup[p.s] = []; sups.push(p.s); }
+      bySup[p.s].push({ r: r, p: p });
+      sum[p.s] = (sum[p.s] || 0) + p.q * p.p;
+    });
+  });
+  sups.sort(function (a, b) { return a - b; });
+  var total = 0;
+  sups.forEach(function (k) { total += sum[k] || 0; });
+  return { rows: rows, sups: sups, sum: sum, bySup: bySup, total: total };
+});
+
+// 明细视图状态：按供应商 / 全部物资；展开的供应商；搜索词；已显示条数
+var _dl = { mode: 'all', open: -1, q: '', shown: 20, supAll: false };
+// 页面内标段 tab 状态（key = 页面 id，值为标段下标）
+var _mtab = {};
+function _dlSet() { var seg = _mtab['deal'] || 0; return DEAL_SECS[seg] || DEAL_SECS[0]; }
+function _dlRows() {
+  var S = _dlSet(), q = _dl.q.toLowerCase();
+  return S.rows.filter(function (r) {
+    return !q || r.code.toLowerCase().indexOf(q) >= 0 || r.name.toLowerCase().indexOf(q) >= 0;
+  });
+}
+// 全部物资：每条物资的分配明细（可展开看分给哪几家）
+function _dlAllList() {
+  var S = _dlSet(), rows = _dlRows(), page = rows.slice(0, _dl.shown), rest = rows.length - page.length;
+  var h = page.map(function (r) {
+    var detail = r.parts.map(function (p) {
+      return '<div class="dl-srow"><span class="dl-sn">' + DEAL_SUPS[p.s][0] + '</span>' +
+        '<span class="dl-sq">' + p.q + ' ' + r.unit + ' × ' + money(p.p) + '</span>' +
+        '<b class="dl-sa">' + money(p.q * p.p) + '</b></div>';
+    }).join('');
+    return '<div class="dl-row"><div class="dl-main"><span class="dl-name">' + r.name + '</span><b class="dl-amt">' + money(r.amt) + '</b></div>' +
+      detail + '</div>';
+  }).join('');
+  if (!page.length) h = '<div class="empty-v">没有匹配的物资</div>';
+  h += '<div class="dl-foot"><span>共 ' + rows.length + ' 条' + (rows.length !== S.rows.length ? '（筛选后）' : '') + ' · 已显示 ' + page.length + ' 条</span><span style="display:flex;gap:8px">' +
+    (rest > 0 ? '<button class="dl-btn" data-dmore="1">加载更多（剩余 ' + rest + '）</button>' : '') +
+    (page.length > 20 ? '<button class="dl-btn" data-dless="1">收起</button>' : '') + '</span></div>';
+  return h;
+}
+// 某家供应商的物资：默认 20 条 + 加载更多
+function _dlSupItems(k) {
+  var S = _dlSet(), sid = S.sups[k], arr = S.bySup[sid] || [], page = arr.slice(0, _dl.shown), rest = arr.length - page.length;
+  var h = page.map(function (x) {
+    return '<div class="dl-row"><div class="dl-main"><span class="dl-name">' + x.r.name + '</span><b class="dl-amt">' + money(x.p.q * x.p.p) + '</b></div>' +
+      '<div class="dl-meta">' + x.r.code + ' · 分配 ' + x.p.q + ' ' + x.r.unit + ' × ' + money(x.p.p) + '</div></div>';
+  }).join('');
+  h += '<div class="dl-foot"><span>共 ' + arr.length + ' 条 · 已显示 ' + page.length + ' 条</span><span style="display:flex;gap:8px">' +
+    (rest > 0 ? '<button class="dl-btn" data-dmore="1">加载更多（剩余 ' + rest + '）</button>' : '') +
+    (page.length > 20 ? '<button class="dl-btn" data-dless="1">收起</button>' : '') + '</span></div>';
+  return h;
+}
+// 按供应商：每家一行（条数、金额、占比），点击展开该家物资
+function _dlSupList() {
+  var S = _dlSet(), total = S.sups.length, limit = (!_dl.supAll && total > 5) ? 5 : total, h = '';
+  for (var k = 0; k < limit; k++) {
+    var sid = S.sups[k], sup = DEAL_SUPS[sid], open = _dl.open === k;
+    h += '<div class="dl-sup" data-dsup-row="' + k + '">' +
+      '<div class="dl-sup-main"><span class="dl-sup-name">' + sup[0] + '</span><b class="dl-sup-amt">' + money(S.sum[sid] || 0) + '</b></div>' +
+      '<div class="dl-sup-meta"><span>' + (S.bySup[sid] || []).length + ' 条物资</span></div>' +
+      (open ? '<div class="dl-sup-open">' + _dlSupItems(k) + '</div>' : '') + '</div>';
+  }
+  if (limit < total) {
+    h += '<div class="dl-foot"><span>成交供应商共 ' + total + ' 家，先显示前 ' + limit + ' 家</span><button class="dl-btn" data-dsupall="1">展开全部 ' + total + ' 家</button></div>';
+  } else {
+    h += '<div class="dl-foot"><span>共 ' + total + ' 家成交供应商 · 点击供应商展开物资，切到「按明细」看整体分配</span></div>';
+  }
+  return h;
+}
+function dealBoxHtml() {
+  var S = _dlSet();
+  return '<div class="dl-mode" id="dlMode">' +
+    '<button data-dmode="sup" class="' + (_dl.mode === 'sup' ? 'on' : '') + '">按供应商</button>' +
+    '<button data-dmode="all" class="' + (_dl.mode === 'all' ? 'on' : '') + '">按明细</button></div>' +
+    '<div class="dl-tools" id="dlTools" style="display:' + (_dl.mode === 'all' ? '' : 'none') + '"><input id="dealQ" class="dl-q" placeholder="搜索物资编码 / 名称" value="' + _dl.q.replace(/"/g, '&quot;') + '"></div>' +
+    '<div class="dl-sum">共 <b>' + S.rows.length + '</b> 条物资 · 成交 <b>' + S.sups.length + '</b> 家 · 已分配 <b>' + money(S.total) + '</b> 元</div>' +
+    '<div id="dealListBox">' + (_dl.mode === 'sup' ? _dlSupList() : _dlAllList()) + '</div>';
+}
+function refreshDealList() {
+  var box = $('dealListBox'); if (box) box.innerHTML = (_dl.mode === 'sup' ? _dlSupList() : _dlAllList());
+}
+
+var LIST = [
+  {
+    id: 'notice', type: '公告发布审核', node: '招标公告', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-10-12 10:00',
+    keys: [['公告发布日期', '2026-10-12 09:00'], ['公告结束日期', '2026-10-21 17:00', 1], ['对投标人投标申请进行审核', '是'], ['是否在线审核投标申请资料', '是']],
+    flow: { name: '发布审核流程', chain: CHAIN4, at: 3 },
+    secs: [
+      { h: '发布媒体', items: [
+        { table: { cols: ['序号', '媒体名称'], main: 1, rows: [['1', '中国采购与招标网（www.chinabidding.com.cn）'], ['2', '扬子江药业集团电子招标采购平台（https://zb.lyc.cn）'], ['3', '中国招标投标公共服务平台（www.cebpubservice.com）']] } }] },
+      { h: '公告信息', items: [
+        { kv: [['公告标题', '冻干制剂车间二期土建及机电安装工程招标公告']] },
+        { preview: '公告内容' },
+        { kv: [['公告附件', '暂无附件']] }] }
+    ]
+  },
+  {
+    id: 'invite', type: '邀请函审批', node: '邀请函', tag: '邀请招标 / 议价', proj: P_INV, init: '陈经办', start: '2026-10-11 09:20',
+    keys: [['邀请回复截止时间', '2026-10-13 17:00', 1, 1], ['投标文件递交截止时间', '2026-10-14 09:30'], ['开标时间', '2026-10-14 09:30'], ['邀请投标人', '4 家（本系统自选）', 0, 1]],
+    flow: { name: '邀请函审批流程', tip: '全部同意后系统向名单内投标人发送邀请函（站内信 + 短信）；发送前可在本页调整邀请名单', chain: CHAIN4, at: 3 },
+    secs: [
+      { h: '议程安排情况', sub: '节假日顺延', items: [
+        { kv: [['邀请回复截止时间', '2026-10-13 17:00'], ['投标文件递交截止时间', '2026-10-14 09:30'], ['开标时间', '2026-10-14 09:30']] }] },
+      { h: '报名设置', items: [
+        { kv: [['对投标人投标申请进行审核', '是'], ['是否在线审核投标申请资料', '是']] },
+        ,
+        ] },
+      { h: '邀请函', items: [
+        { preview: '邀请函正文' },
+      { kv: [['邀请函附件', '邀请函附件.pdf<span class="af-ops" style="margin-left:10px"><a class="rc-a" data-f="邀请函附件.pdf">预览</a><a class="af-dl" data-f="邀请函附件.pdf">下载</a></span>']] }] },
+      { h: '邀请投标人', sub: '共 4 家（本系统自选）', items: [
+        { table: INV_TABLE },
+        ] }
+    ]
+  },
+  {
+    id: 'doc', type: '招标文件审批', node: '招标文件', proj: P_ENG, init: '张采购员', start: '2026-10-12 10:20',
+    keys: [['招标文件获取开始时间', '2026-10-12 09:00'], ['招标文件获取截止时间', '2026-10-21<br>17:00', 1], ['投标人提交澄清截止时间', '2026-10-22 17:00'], ['投标有效期', '90 天']],
+    flow: { name: '招标文件审批', tip: '与公告发布审核分开审批、可并行；全部同意后系统自动发售招标文件', chain: CHAIN4, at: 3 },
+    secs: [
+      { h: '招标文件', sub: '查看招标文件历史版本', items: [{ af: [{ name: '招标文件', file: '招标文件.pdf', note: '上传后供应商可在文件发放节点下载' }] }] },
+      { h: '招标文件附件', sub: '随招标文件发放给投标人', items: [{ af: [
+        { file: '技术规格书.pdf' },
+        { file: '工程量清单.xlsx' }] }] },
+      { h: '附件资料', sub: '仅内部审批用，不随招标文件发放', items: [{ af: [
+        { name: '议价报告', file: '—', note: '议价项目必填' },
+        { name: '工作量清单', file: '—', note: '非必填' },
+        { name: '答疑', file: '—', note: '非必填' },
+        { name: '图纸', file: '施工图（建筑/结构/机电）.zip' },
+        { name: '其他附件', file: '工程量清单.xlsx' }] }] }
+    ]
+  },
+  {
+    id: 'issue', type: '投标人审核审批', node: '发标管理', proj: P_ENG, init: '陈经办', start: '2026-10-21 17:30',
+    keys: [['审核通过', '9 条', 1], ['不通过', '0 条'], ['已弃标', '1 家']],
+    flow: { name: '投标人审核审批', tip: '所有标段一次提交、一次审批；提交后审核结果锁定', chain: [['经办部门主管', '陈主管'], ['经办部门负责人', '赵负责人']], at: 1 },
+    secs: [
+      { h: '标段一 投标情况', items: [{ acc: [
+          pi('泰州建设工程有限公司', '标段一', '标段一', '张经理 13812345678 zhangjl@sdjs.com', '通过', '—'),
+          pi('上海华鼎机械设备有限公司', '标段一', '标段一', '李工 13625252525 ligong@qdport.com', '待审核', '已弃标'),
+          pi('南京恒通机电有限公司', '标段一、标段二', '标段一', '王主管 13898765432 wangzg@jnht.com', '通过', '—'),
+          pi('苏州恒达机械有限公司', '标段一', '标段一', '赵总 13712341234 zhaoz@wfht.com', '通过', '—'),
+          pi('泰州通达机电有限公司', '标段一、标段三', '标段一', '孙经理 13898765432 sunjl@yttd.com', '通过', '—')] }] },
+      { h: '标段二 投标情况', items: [{ acc: [
+          pi('泰州鑫源机械有限公司', '标段二', '标段二', '刘工 13678901234 liug@zbxy.com', '通过', '—'),
+          pi('南京恒通机电有限公司', '标段一、标段二', '标段二', '王主管 13898765432 wangzg@jnht.com', '通过', '—'),
+          pi('苏州恒达机械有限公司', '标段二', '标段二', '赵总 13712341234 zhaoz@wfht.com', '通过', '—')] }] },
+      { h: '标段三 投标情况', items: [{ acc: [
+          pi('泰州通达机电有限公司', '标段一、标段三', '标段三', '孙经理 13556789012 sunjl@yttd.com', '通过', '—'),
+          pi('泰州蓝天建设有限公司', '标段三', '标段三', '陈经理 13411112222 chenjl@whlt.com', '通过', '—')] }] }
+    ]
+  },
+  {
+    id: 'tesum', type: '技术标汇总表审批', node: '技术标评审', proj: P_ENG, init: '陈经办', start: '2026-10-29 10:00', keys1: 1,
+    keys: [['投标人（排名 1）', '泰州建设工程有限公司', 0, 1], ['技术标得分', '92.5', 1]],
+    flow: { name: '汇总表审批', tip: '也可下载汇总表，领导签字后上传签字扫描件（上传后视为审批完成）', chain: [['直属领导', '陈主管']], at: 0 },
+    secs: [
+      { h: '技术评议', items: [{ table: TECH_TABLE }] },
+      { h: '评分表', items: [{ table: SCORE_FILES }] }
+    ]
+  },
+  {
+    id: 'transfer', type: '移交审批', node: '技术标材料移交', proj: P_ENG, init: '陈经办', start: '2026-10-30 10:00',
+    keys: [['共报名', '6 家'], ['预审通过', '5 家', 1], ['不通过', '1 家'], ['技术标评分数据 · 参评', '5 家']],
+    flow: { name: '移交审批', tip: '审批链：经办部门领导审批，通过后项目自动移交招标中心', chain: [['经办部门领导', '赵负责人']], at: 0 },
+    secs: [
+      { h: '技术标材料移交', items: [
+        ,
+        { kv: [['标段', '01 标段一', '02 标段二']] },
+        ] },
+      { h: '结构化数据（系统内流转）', items: [
+        { sub: '① 报名及资格预审情况' },
+        ,
+        { acc: [
+          pi('泰州建设工程有限公司', '标段一', '标段一', '张伟 0523-86551234', '通过', '—'),
+          pi('南京恒通机电有限公司', '标段一、标段二', '标段一、标段二', '李强 025-84556677', '通过', '—'),
+          pi('苏州恒达机械有限公司', '标段一', '标段一', '王芳 0512-65338899', '通过', '—'),
+          pi('上海华鼎机械设备有限公司', '标段一', '标段一', '陈明 021-56661200', '通过', '—'),
+          pi('泰州通达机电有限公司', '标段一、标段三', '标段一、标段三', '刘洋 0523-87225678', '通过', '—'),
+          pi('盐城宏宇建设工程有限公司', '标段一', '—', '周军 0515-88116789', '不通过', '—')
+        ] },
+        { sub: '② 技术标评分数据' },
+        ,
+        { sub: '技术评议' },
+        ,
+        { table: TECH_TABLE },
+        { sub: '评分表' },
+        ,
+        { table: SCORE_FILES },
+        ,
+        ] },
+      { h: '必传材料清单', items: [
+        { af: [
+          { name: '概算 / 预算说明', file: '概算预算说明.pdf', note: '必传 · 项目概算或预算构成说明文件，移交前置条件「预算说明齐全」的支撑材料' },
+          { name: 'URS（招标报告）', file: 'URS招标报告.pdf', note: '必传 · 项目需求说明书 / 招标报告正式版（立项源于飞书、PPMS 等外部系统，系统内无原件，须补传）' }] },
+        ] },
+      { h: '清单编制（清标）', items: [
+        { kv: [['是否启用清单编制', '未启用']] },
+        ] },
+      { h: '其他附件', items: [{ kv: [['其他附件', '—', '选填，如技术交流纪要、补充说明等']] }] },
+      { h: '移交说明', items: [{ empty: '—' }] }
+    ]
+  },
+  {
+    id: 'nego', type: '议价邀请审核', node: '评标·新增议价记录', proj: P_ENG, init: '张采购员', start: '2026-11-03 14:20',
+    flow: { name: '审核流程', tip: '提交后进入审核，审核通过后在议价记录中点击「设置报价时间」，填写报价截止时间与报价须知并发送给投标人；审核通过前投标人不会收到议价通知。', chain: [['招标中心领导', '孙主任']], at: 0 },
+    secs: [
+      { h: '审批信息', sub: '发起议价时填写，仅审批人可见', items: [
+        { kv: [['是否抛价', '否'],
+               ['审批说明', '三家报价均高于目标价，第 1 名泰州建设 8,860,865.00 元仍高出目标价 3.2%，建议按单次报价再议一轮，以最低价优先谈判；若本轮仍高于目标价，按流标处理并重新招标。']] },
+        { af: [{ name: '审批附件', file: '议价申请说明.pdf' }] }] },
+      { items: [
+        { sub: '选择投标人' },
+        { table: { cols: ['序号', '投标人', '商务标排名', '最终报价（元）'], main: 1, rows: [['1', '泰州建设工程有限公司', '第1名', '8,860,865.00'], ['2', '南京恒通机电有限公司', '第2名', '9,120,000.00'], ['3', '苏州恒达建设工程有限公司', '第3名', '9,305,000.00']] } }
+      ] }
+    ]
+  },
+  {
+    id: 'winner', type: '定标审批', node: '中标人确定', proj: P_ENG, init: '张采购员', start: '2026-11-06 10:00',
+    flow: { name: '定标审批流程', tip: '需求部门主管及负责人 → 经办主管及负责人 → 监管部门 → 招标中心', chain: [['需求部门主管', '王主管'], ['需求部门负责人', '刘负责人'], ['经办部门主管', '陈主管'], ['经办部门负责人', '赵负责人'], ['监管部门', '审计部·钱部长'], ['招标中心领导', '孙主任']], at: 5 },
+    secs: [
+      { h: '申请详情', sub: 'PMS 招标记录同步', items: [
+        { kv: [['公司', '扬子江药业集团有限公司'],
+               ['招标记录编号', 'ZB-JL-2026-0042'],
+               ['标题', '扬子江药业+装备工程部+冻干车间二期土建及机电安装工程定标'],
+               ['招标文件关联', '招标文件审批 · 2026-10-12 已通过'],
+               ['定标日期', '2026-11-06'],
+               ['是否需要法律合规部审批', '否']] }] },
+      { h: '候选单位明细', segs: [
+        { label: '01 标段一', sub: '共 2 家候选', items: [
+          { acc: [
+            { rank: 1, name: '泰州建设工程有限公司', win: true },
+            { rank: 2, name: '南京恒通机电有限公司', win: false }] }] },
+        { label: '02 标段二', sub: '共 2 家候选', items: [
+          { acc: [
+            { rank: 1, name: '苏州恒达建设工程有限公司', win: true },
+            { rank: 2, name: '泰州通达机电有限公司', win: false }] }] }] },
+      { h: '经办与备注', items: [
+        { kv: [['招标经办人', '张采购员'],
+               ['招标经办部门', '招标事务处'],
+               ['经办部门', '采购中心'],
+               ['备注', '定标结果经评标委员会确认，中标价低于立项预算 3.7%']] }] },
+      { h: '附件资料', sub: '评标报告必传，其余选填', items: [{ af: [
+        { name: '评标报告', file: '评标报告.pdf' },
+        { name: '商务标', file: '商务标.pdf' },
+        { name: '其他附件', file: '—' }] }] },
+      { h: '中标通知书', items: [{ kv: [['是否发布中标通知书', '否']] }] }
+    ]
+  },
+  {
+    id: 'deal', type: '定标审批', node: '中标人确定（物资类）', proj: P_MAT, init: '张采购员', start: '2026-10-14 10:30',
+    flow: { name: '定标审批流程', tip: '物资类 · 200 万元及以下：经办 + 财务', chain: [['经办部门主管', '陈主管'], ['经办部门负责人', '赵负责人'], ['财务部', '周经理']], at: 2 },
+    secs: [
+      { h: '成交明细', segs: [
+        { label: '01 标段一', sub: '共 ' + DEAL_SECS[0].rows.length + ' 条 · ' + DEAL_SECS[0].sups.length + ' 家成交', items: [{ deal: 1 }] },
+        { label: '02 标段二', sub: '共 ' + DEAL_SECS[1].rows.length + ' 条 · ' + DEAL_SECS[1].sups.length + ' 家成交', items: [{ deal: 1 }] }] },
+      { h: '定标材料', items: [{ af: [
+        { name: '招标报告', file: '招标报告-冻干制剂车间二期.pdf' },
+        { name: '评标报告', file: '评标报告-冻干制剂车间二期.pdf' },
+        { name: '全部单位报价', quoteList: 1 },
+        { name: '支持性文件', file: '—' },
+        { name: '评标会纪要', tag: '非必填', file: '—' }] }] },
+      { h: '定标附件', items: [{ af: [
+        { name: '评标报告.pdf', file: '评标报告.pdf' }] }] },
+      { h: '中标通知书', segs: [
+        { label: '01 标段一', items: [
+          { kv: [['是否发布中标通知书', '是']] },
+          { dochead: ['中标人：亳州精工药材有限公司　中标金额 ' + money(DEAL_SECS[0].sum[0]) + ' 元', '已随定标审批提交，审批中不可修改'], doc: wnTpl(P_MAT, '亳州精工药材有限公司', money(DEAL_SECS[0].sum[0]) + ' 元') }] },
+        { label: '02 标段二', items: [
+          { kv: [['是否发布中标通知书', '是']] },
+          { dochead: ['中标人：南京同仁堂药业有限公司　中标金额 ' + money(DEAL_SECS[1].sum[3]) + ' 元', '已随定标审批提交，审批中不可修改'], doc: wnTpl(P_MAT, '南京同仁堂药业有限公司', money(DEAL_SECS[1].sum[3]) + ' 元') }] }] }
+    ]
+  },
+  {
+    id: 'fail', type: '招标失败审批', node: '招标失败/废标', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-10-28 11:00',
+    keys: [['招标失败处理方式', '流标', 1], ['招标失败原因', '有效投标人不足3家', 0, 1]],
+    flow: { name: '招标失败审批', tip: '审批通过后执行所选处理方式', chain: [['招标中心领导', '孙主任']], at: 0 },
+    secs: [
+      { h: '招标失败', items: [{ kv: [['招标失败情况描述', '技术标评审后有效投标人不足 3 家，不满足开标要求，项目流标。']] }] },
+      { h: '流标公示', items: [{ kv: [['是否发流标公示', '否']] }] }
+    ]
+  },
+  {
+    id: 'chg', type: '变更审批', tag: '技术标时间', node: '技术标时间变更', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-11-19 09:10',
+    keys: [['变更类型', '技术标时间变更'], ['申请时间', '2026-11-19 08:40'],
+      ['变更原因说明', '<span style="display:block;text-align:left;line-height:1.65">投标人反馈技术标编制时间不足，申请顺延技术标文件递交截止时间与技术标开标时间，已与经办部门确认。</span>', 0, 1]],
+    flow: { name: '变更审批流程', tip: '审批通过后发布变更公告并通知已报名投标人，议程同步更新', chain: CHAIN4, at: 1 },
+    secs: [
+      { h: '变更内容', sub: '只填写需要变更的时间项，未填写的保持原时间', items: [
+        { table: { hideLabel: 1, cols: ['序号', '时间项', '原时间', '变更后时间'], main: 1, rows: [
+          ['1', '公告截止时间', '2026-10-21 17:00', '2026-10-21 17:00'],
+          ['2', '招标文件获取截止时间', '2026-10-21 17:00', '2026-10-21 17:00'],
+          ['3', '投标人提交澄清截止时间', '2026-10-24 17:00', '2026-10-24 17:00'],
+          ['4', '技术标文件递交截止时间', '2026-10-28 09:30', '2026-11-03 09:30'],
+          ['5', '技术标开标时间', '2026-10-28 09:30', '2026-11-03 09:30']] } }
+      ] }
+    ]
+  },
+  {
+    id: 'chgBiz', type: '变更审批', tag: '商务标时间', node: '商务标时间变更', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-11-19 10:20',
+    keys: [['变更类型', '商务标时间变更'], ['申请时间', '2026-11-19 09:50'],
+      ['变更原因说明', '<span style="display:block;text-align:left;line-height:1.65">因技术标顺延，商务标递交与开标时间同步顺延，已与商务标负责人确认。</span>', 0, 1]],
+    flow: { name: '变更审批流程', tip: '审批通过后发布变更公告并通知已报名投标人，商务标议程同步更新', chain: CHAIN4, at: 1 },
+    secs: [
+      { h: '变更内容', sub: '只填写需要变更的时间项，未填写的保持原时间', items: [
+        { table: { hideLabel: 1, cols: ['序号', '时间项', '原时间', '变更后时间'], main: 1, rows: [
+          ['1', '商务标文件递交截止时间', '2026-11-04 17:00', '2026-11-08 17:00'],
+          ['2', '商务标开标时间', '2026-11-05 09:30', '2026-11-09 09:30']] } }
+      ] }
+    ]
+  },
+  {
+    id: 'chgAnnc', type: '变更审批', tag: '公告', node: '变更公告', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-11-19 11:05',
+    keys: [['变更类型', '变更公告'], ['申请时间', '2026-11-19 10:40'],
+      ['变更原因说明', '<span style="display:block;text-align:left;line-height:1.65">技术标、商务标时间均顺延，需同步发布变更公告并延长公告结束时间。</span>', 0, 1]],
+    flow: { name: '变更审批流程', tip: '审批通过后原公告自动作废，发布变更公告并短信通知已报名投标人', chain: CHAIN4, at: 1 },
+    secs: [
+      { h: '变更内容', items: [
+        { kv: [['原公告', '冻干制剂车间二期土建及机电安装工程招标公告'], ['发布媒体', '中国采购与招标网、扬子江药业集团电子招标采购平台、中国招标投标公共服务平台'], ['公告结束时间', '2026-10-27 17:00'], ['变更公告标题', '冻干制剂车间二期土建及机电安装工程招标公告（变更）'], ['变更公告内容', '因技术标编制时间不足，技术标文件递交截止时间与技术标开标时间顺延至 2026-11-03 09:30，其余内容不变。']] }
+      ] },
+      { h: '公告附件', items: [
+        { af: [{ file: '变更公告（2026-11-19）.pdf' }] }
+      ] }
+    ]
+  },
+  {
+    id: 'chgDoc', type: '变更审批', tag: '招标文件', node: '变更招标文件', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-11-19 14:10',
+    keys: [['变更类型', '变更招标文件'], ['申请时间', '2026-11-19 13:45'],
+      ['变更原因说明', '<span style="display:block;text-align:left;line-height:1.65">补充技术标评分细则与图纸，需替换招标文件并通知已下载的投标人重新下载。</span>', 0, 1]],
+    flow: { name: '变更审批流程', tip: '审批通过后替换招标文件版本，通知已获取文件的投标人重新下载', chain: CHAIN4, at: 1 },
+    secs: [
+      { h: '变更内容', items: [
+        { kv: [['原招标文件', '招标文件.pdf']] },
+        { af: [{ name: '变更后招标文件', file: '招标文件（变更版）.pdf' }] }
+      ] }
+    ]
+  },
+  {
+    id: 'chgWinner', type: '变更审批', tag: '中标人', node: '变更中标人（递补）', proj: P_ENG, section: '标段一（01）', init: '张采购员', start: '2026-11-19 15:30',
+    keys: [['变更类型', '变更中标人（递补）'], ['申请时间', '2026-11-19 15:05'],
+      ['变更原因说明', '<span style="display:block;text-align:left;line-height:1.65">第一中标候选人书面放弃中标，按评标排名顺位由第二名递补。</span>', 0, 1]],
+    flow: { name: '变更审批流程', tip: '审批通过后原中标通知书作废，向递补单位发送中标通知书并重新发起定标审批', chain: CHAIN4, at: 1 },
+    secs: [
+      { h: '变更内容', items: [
+        { kv: [['原中标人', '泰州建设工程有限公司'], ['变更原因', '中标人放弃中标'], ['递补中标人', '南京恒通机电有限公司（排名第 2 · 最终报价 9,120,000.00 元）']] }
+      ] },
+      { h: '附件资料', items: [
+        { af: [{ name: '附件', file: '放弃中标声明.pdf' }] }
+      ] }
+    ]
+  }
+];
+// 预览正文：按页面 id 取（邀请函等长文本不直接铺在页面上，点「预览」在弹出的弹层里看）
+var DOCS = {
+  notice: { t: '公告内容', s: '共 1 页 · 公告发布日期 2026-10-12', h: NOTICE_DOC },
+  invite: { t: '邀请函', s: '共 1 页 · 邀请回复截止 2026-10-13 17:00', h: INV_DOC }
+};
+var OPINIONS = ['同意', '同意，请按流程推进', '材料齐全，同意', '情况属实，同意'];
+var BACKS = ['附件不完整，请补充', '金额有误，请核实', '请补充说明后重新提交'];
+
+// 组织架构（演示数据）：所有选人统一在组织架构内选择，可多选
+var ORG = [
+  { d: '工程部', p: [['周工程师', '工程师'], ['刘总监', '总监']] },
+  { d: '采购部', p: [['吴经理', '经理'], ['陈主管', '主管']] },
+  { d: '法务部', p: [['郑律师', '法务顾问']] },
+  { d: '财务部', p: [['王会计', '会计'], ['周经理', '财务经理']] },
+  { d: '质量部', p: [['李主管', '质量主管']] },
+  { d: '生产部', p: [['孙经理', '生产经理']] },
+  { d: '审计部', p: [['钱部长', '部长']] },
+  { d: '招标中心', p: [['孙主任', '主任'], ['吴主任', '招标室主任']] }
+];
+var _sel = [], _tmpSel = [], _orgDept = '';
+// 选人控件与组织架构选择
+function renderSel() {
+  var t = $('pSelText'), c = $('pSelChips');
+  if (!t || !c) return;
+  t.textContent = _sel.length ? '已选 ' + _sel.length + ' 人' : '请选择人员（组织架构）';
+  t.className = _sel.length ? 'has' : '';
+  c.innerHTML = _sel.map(function (n) { return '<span class="sel-chip"><b>' + n + '</b><i data-rm="' + n + '">×</i></span>'; }).join('');
+}
+function openOrg() {
+  _tmpSel = _sel.slice(); _orgDept = '';
+  $('orgQ').value = '';
+  renderOrgDepts(); renderOrgList();
+  $('mask').classList.add('on'); $('orgSheet').classList.add('on');
+}
+function closeOrg() { $('orgSheet').classList.remove('on'); }
+function renderOrgDepts() {
+  var h = '<button data-od="" class="' + (_orgDept === '' ? 'on' : '') + '">全部</button>';
+  ORG.forEach(function (g) { h += '<button data-od="' + g.d + '" class="' + (_orgDept === g.d ? 'on' : '') + '">' + g.d + '</button>'; });
+  $('orgDepts').innerHTML = h;
+}
+function renderOrgList() {
+  var q = ($('orgQ').value || '').trim().toLowerCase(), h = '';
+  ORG.forEach(function (g) {
+    if (_orgDept && g.d !== _orgDept) return;
+    g.p.forEach(function (p) {
+      if (q && p[0].toLowerCase().indexOf(q) < 0 && g.d.toLowerCase().indexOf(q) < 0) return;
+      var on = _tmpSel.indexOf(p[0]) >= 0;
+      h += '<div class="org-row' + (on ? ' on' : '') + '" data-op="' + p[0] + '"><span class="org-chk"></span><span class="org-name">' + p[0] + '</span><span class="org-meta">' + g.d + ' · ' + p[1] + '</span></div>';
+    });
+  });
+  $('orgList').innerHTML = h || '<div class="empty-v" style="padding:16px 0;text-align:center">没有匹配的人员</div>';
+  $('orgCount').textContent = '已选 ' + _tmpSel.length + ' 人';
+}
+function toggleOrg(n) {
+  var i = _tmpSel.indexOf(n);
+  if (i >= 0) _tmpSel.splice(i, 1); else _tmpSel.push(n);
+  renderOrgList();
+}
+function orgConfirm() {
+  _sel = _tmpSel.slice();
+  renderSel(); closeOrg();
+}
+// 「更多」操作配置：加签（前 / 后）增加审批人；转交 变更处理人；抄送 仅查看、不参与审批
+var POS_TIP = { before: '加签人先于您审批，同意后回到您继续审批', after: '您同意后先流转至加签人审批，再进入下一节点' };
+var PICK = {
+  sign: { t: '加签', label: '加签人', tl: '加签说明', btn: '确认加签', sub: '选择加签方式与加签人，加签记录会写入审批进度' },
+  transfer: { t: '转交', label: '接收人', tl: '转交说明', btn: '确认转交', no: '请选择接收人', sub: '将当前步骤转交给他人审批，转交后由接收人审批，您无需再审批' },
+  copy: { t: '抄送', label: '抄送人', tl: '抄送说明', btn: '确认抄送', sub: '被抄送人只能查看审批单、不能操作，不影响审批流程' }
+};
+
+var _cur = null, _mode = 'ok', _state = {}, _sign = {}, _copy = {}, _trans = {}, _pick = 'sign', _pos = 'before';
+
+function $(id) { return document.getElementById(id); }
+function addMin(t, m) {
+  var p = t.match(/(\d+)-(\d+)-(\d+) (\d+):(\d+)/), d = new Date(+p[1], p[2] - 1, +p[3], +p[4], +p[5] + m);
+  var z = function (x) { return (x < 10 ? '0' : '') + x; };
+  return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + ' ' + z(d.getHours()) + ':' + z(d.getMinutes());
+}
+function toast(msg) {
+  var t = $('toast'); t.textContent = msg; t.classList.add('on');
+  clearTimeout(t._h); t._h = setTimeout(function () { t.classList.remove('on'); }, 1800);
+}
+function byId(id) { return LIST.filter(function (x) { return x.id === id; })[0]; }
+function nowStr() { return '2026-11-05 ' + new Date().toTimeString().slice(0, 5); }
+function signsOf(id, pos) { return (_sign[id] || []).filter(function (x) { return x.pos === pos; }); }
+// 我同意后的下一处理人：有「在我之后」加签时先到加签人
+function nextOf(it) {
+  var a = signsOf(it.id, 'after'), f = it.flow;
+  if (a.length) return ['加签审批', a[0].who.join('、')];
+  return f.at + 1 < f.chain.length ? f.chain[f.at + 1] : null;
+}
+
+// ===== 区块渲染 =====
+// 技术标得分：每个投标人只有一个得分，按排名紧凑展示（列名一行 + 每家一行）
+function scoreHtml(t) {
+  return '<div class="sc-list"><div class="sc-hd"><span>' + t.cols[3] + '</span><span>' + t.cols[1] + '</span><span>' + t.cols[2] + '</span></div>' +
+    t.rows.map(function (r) {
+      return '<div class="sc-row' + (r[3] === '1' ? ' first' : '') + '"><span class="sc-rk">' + r[3] + '</span><span class="sc-n">' + r[1] + '</span><span class="sc-v">' + r[2] + '</span></div>';
+    }).join('') + '</div>';
+}
+function gridHtml(t) {
+  var NUM = /金额|税额|税率|汇率|数量|单价|报价|费用/;
+  var h = '<div class="gt-wrap"><table class="gt"><thead><tr>';
+  t.cols.forEach(function (c) { h += '<th' + (NUM.test(c) ? ' class="num"' : '') + '>' + c + '</th>'; });
+  h += '</tr></thead><tbody>';
+  t.rows.forEach(function (r) {
+    h += '<tr>';
+    t.cols.forEach(function (c, k) {
+      var v = r[k];
+      h += '<td' + (NUM.test(c) ? ' class="num"' : '') + '>' + (v === undefined || v === null || v === '' ? '—' : v) + '</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table></div>';
+  if (t.rows.length > 6 || t.cols.length > 5) {
+    h += '<div class="gt-tip"><span>' + (t.rows.length > 6 ? '共 ' + t.rows.length + ' 条明细' : '共 ' + t.rows.length + ' 行') + '</span><span>左右滑动查看全部列</span></div>';
+  }
+  return h;
+}
+function tableHtml(t) {
+  if (t.score) return scoreHtml(t);
+  if (t.grid) return gridHtml(t);
+  if (!t.rows.length) return '<div class="rc"><div class="rc-f" style="color:var(--text-3)">' + t.cols.join(' / ') + '</div><div class="empty-v" style="padding:6px 0 0;text-align:center">暂无数据</div></div>';
+  return t.rows.map(function (r) {
+    var h = '<div class="rc"><div class="rc-h"><span class="rc-no">' + r[0] + '</span><span class="rc-t">' + (t.hideLabel ? '' : '<em>' + t.cols[t.main] + '</em>') + r[t.main] + '</span>' +
+      (t.act ? '<span class="rc-a" data-f="' + r[t.main] + '">' + t.act + '</span>' : '') + '</div>';
+    t.cols.forEach(function (c, k) { if (k !== 0 && k !== t.main) { if (t.hideEmpty && (r[k] === '—' || r[k] === '' || r[k] == null)) return; h += '<div class="rc-f"><span>' + c + '</span><b>' + r[k] + '</b></div>'; } });
+    return h + '</div>';
+  }).join('');
+}
+function pi(name, seg, paid, contact, st, quit) {
+  var tag = quit === '已弃标' ? '已弃标' : st;
+  var cls = tag === '已弃标' || tag === '不通过' ? 'no' : (tag === '通过' ? 'ok' : 'warn');
+  return {
+    name: name, tag: tag, tagCls: cls,
+    kv: [['申请的标段', seg], ['支付的标段', paid], ['联系人', contact], ['投标人申请审核', st], ['弃标函', quit]]
+  };
+}
+function accBody(a) {
+  if (a.kv) {
+    return a.kv.map(function (r) {
+      return '<div class="kv"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>';
+    }).join('');
+  }
+  var label = a.win ? '中标金额' : '最终报价';
+  var tot = 0, netTot = 0;
+  WIN_ITEMS.forEach(function (it) {
+    var amt = it.amt[a.name] || 0;
+    tot += amt;
+    netTot += splitTax(amt, it.rate)[0];
+  });
+  var h = tot > 0 ? '<div class="kv"><span>含税总价</span><b>' + money(tot) + ' 元</b></div>' +
+    '<div class="kv"><span>不含税总价</span><b>' + money(netTot) + ' 元</b></div>' : '';
+  WIN_ITEMS.forEach(function (it) {
+    var amt = it.amt[a.name] || 0;
+    var st = splitTax(amt, it.rate);
+    h += '<div class="acc-sub"><div class="acc-sub-h">' + it.n + '</div>' +
+      '<div class="kv"><span>' + label + '</span><b>' + money(amt) + ' 元</b></div>' +
+      '<div class="kv"><span>预算金额</span><b>' + money(it.budget) + ' 元</b></div>' +
+      
+      '<div class="kv"><span>税率</span><b>' + it.rate + '%</b></div>' +
+      '<div class="kv"><span>不含税金额</span><b>' + money(st[0]) + ' 元</b></div>' +
+      '<div class="kv"><span>税额</span><b>' + money(st[1]) + ' 元</b></div>' +
+      '<div class="kv"><span>项目归属</span><b>' + it.belong + '</b></div>' +
+      '<div class="kv"><span>需求部门</span><b>' + it.dept + '</b></div></div>';
+  });
+  return h;
+}
+function accHtml(list, withPrice) {
+  return '<div class="acc' + (withPrice ? ' price-mode' : '') + '">' + list.map(function (a, i) {
+    var right = '';
+    if (a.tag) right = '<span class="acc-tag ' + (a.tagCls || 'muted') + '">' + a.tag + '</span>';
+    else if (a.val) right = '<span class="acc-v">' + a.val + '</span>';
+    else if (a.win !== undefined) right = '<span class="acc-tag' + (a.win ? '' : ' muted') + '">' + (a.win ? '中标' : '未中标') + '</span>';
+    return '<div class="acc-item">' +
+      '<div class="acc-hd" data-acc-hd="1">' +
+        (a.rank ? '<span class="acc-rk' + (a.win ? ' win' : '') + '">' + a.rank + '</span>' : '') +
+        '<span class="acc-n">' + a.name + '</span>' +
+        right +
+        '<i class="fold-arr"></i>' +
+      '</div><div class="acc-bd">' + accBody(a) + '</div></div>';
+  }).join('') + '</div>';
+}
+// 7补.277 全部单位报价：收起显示一行，展开列出全部投标单位，每家后面跟「查看」进分项报价页
+function quoteFoldHtml() {
+  var S = _dlSet();
+  var rows = S.sups.map(function (sid) {
+    return '<div class="qf-row"><span class="qf-n">' + DEAL_SUPS[sid][0] + '</span>' +
+      '<b class="qf-v">' + money(S.sum[sid] || 0) + '</b>' +
+      '<span class="rc-a" data-quote="' + sid + '">查看</span></div>';
+  }).join('');
+  return '<div class="kv qf-hd"><span>全部单位报价</span><b><span class="rc-a" data-qfold="1">展开</span></b></div>' +
+    '<div class="qf-body">' + rows + '</div>';
+}
+// 分项报价页：展示某投标人填写的全部分项报价（含税单价 × 数量、税率 13%）
+function quotePageHtml(k) {
+  var S = _dlSet(), s = DEAL_SUPS[k], list = S.bySup[k] || [];
+  var rows = list.map(function (x, i) {
+    var q = x.p.q, p = x.p.p, amt = q * p;
+    return [String(i + 1), x.r.code, x.r.name, String(q), money(p), '13%', money(amt)];
+  });
+  var total = S.sum[k] || 0;
+  var t = '<div class="gt-wrap"><table class="gt"><thead><tr>' +
+    ['序号', '物资编码', '物资名称', '数量', '含税单价（元）', '税率', '含税金额（元）'].map(function (c) {
+      return '<th' + (/金额|单价|数量|税率/.test(c) ? ' class="num"' : '') + '>' + c + '</th>';
+    }).join('') + '</tr></thead><tbody>' +
+    rows.map(function (r) {
+      return '<tr>' + r.map(function (v, j) {
+        return '<td' + (j >= 3 ? ' class="num"' : '') + '>' + v + '</td>';
+      }).join('') + '</tr>';
+    }).join('') + '</tbody></table></div>' +
+    '<div class="gt-tip"><span>共 ' + list.length + ' 条分项报价</span><span>含税合计 ' + money(total) + ' 元 · 左右滑动查看全部列</span></div>';
+  return '<div class="kv"><span><span class="rc-a" data-qback="1">← 返回定标审批</span></span></div>' +
+    '<div class="sub-h">' + s[0] + '<small>投标人分项报价</small></div>' + t +
+    '<div class="note" style="margin-top:10px">本页为投标人在投标工具「分项报价表」中填写的全部内容，含税单价 × 数量 = 含税金额，税率按物资适用 13% 展示。</div>';
+}
+function showQuote(k) {
+  var back = _cur || 'deal';
+  $('dTitle').textContent = '分项报价';
+  $('dBody').innerHTML = quotePageHtml(k);
+  $('dBody').setAttribute('data-back', back);
+  $('actbar').hidden = true;
+  show('vDetail');
+  $('dScroll').scrollTop = 0;
+}
+function itemHtml(it) {
+  if (it.note) return '<div class="note' + (it.warn ? ' warn' : '') + '">' + it.note + '</div>';
+  if (it.sub) return '<div class="sub-h">' + it.sub + (it.subs ? '<small>' + it.subs + '</small>' : '') + '</div>';
+  if (it.kv) return it.kv.map(function (r) { return '<div class="kv"><span>' + r[0] + '</span><b>' + r[1] + (r[2] ? '<em>' + r[2] + '</em>' : '') + '</b></div>'; }).join('');
+  if (it.deal) return dealBoxHtml();
+  if (it.acc) return accHtml(it.acc, it.price);
+  if (it.preview) return '<div class="kv"><span>' + it.preview + '</span><b><span class="rc-a" data-doc="' + it.preview + '">预览</span><em>正文不在页面上展开</em></b></div>';
+  if (it.table) return tableHtml(it.table);
+  if (it.empty) return '<div class="empty-v">' + it.empty + '</div>';
+  if (it.doc) return (it.dochead ? '<div class="doc-h"><span>' + it.dochead[0] + '</span><small>' + it.dochead[1] + '</small></div>' : '') + '<div class="doc">' + it.doc + '</div>';
+  if (it.files) return it.files.map(function (f) {
+    var has = f[1] && f[1] !== '—';
+    return '<div class="rc"><div class="rc-h"><span class="rc-t">' + f[0] + '</span>' +
+      (has ? '<span class="af-ops"><a class="rc-a" data-f="' + f[0] + '">预览</a><a class="af-dl" data-f="' + f[1] + '">下载</a></span>' : '<span class="st-muted">未上传</span>') +
+      '</div>' + (has ? '<div class="rc-f"><span style="width:auto">' + f[1] + '</span></div>' : '') + '</div>';
+  }).join('');
+  // 7补.272 附件统一行内布局：[名称] …… [文件名 / 未上传] + 可选说明行，与邀请函正文/附件的写法一致
+  if (it.af) return it.af.map(function (f) {
+    if (f.quoteList) return quoteFoldHtml();
+    var file = f.file || '—';
+    var has = file !== '—' && file !== '';
+    // 7补.281 无固定资料类型时（如招标文件附件）只显示文件名，不显示左侧名称
+    var _lbl = f.name ? '<span style="display:flex;align-items:center;gap:5px;flex-shrink:0;white-space:nowrap">' + f.name + (f.tag ? '<span class="acc-tag muted" style="font-size:11px;padding:0 5px">' + f.tag + '</span>' : '') + '</span>' : '';
+    var _txt = has ? file : (file === '—' ? '未上传' : file);
+    return '<div class="kv">' + _lbl + '<b class="af-row' + (f.name ? '' : ' af-wide') + '">' +
+      '<span class="af-n' + (has ? '' : ' muted') + '">' + _txt + '</span>' +
+      (has ? '<span class="af-ops"><a class="rc-a" data-f="' + file + '">预览</a><a class="af-dl" data-f="' + file + '">下载</a></span>' : '') +
+      (f.note ? '<em>' + f.note + '</em>' : '') + '</b></div>';
+  }).join('');
+  return '';
+}
+function secHtml(s, i) {
+  // 7补.291 多标段：区块内 tab 切换（同一页面的所有 segs 区块共用 _mtab[页面] 的值）
+  if (s.segs) {
+    var ti = Math.min(_mtab[_cur] || 0, s.segs.length - 1), g = s.segs[ti] || s.segs[0];
+    var bar = '<div class="dl-mode sec-tabs">' + s.segs.map(function (x, k) {
+      return '<button data-mtab="' + (i || 0) + '" data-mti="' + k + '" class="' + (k === ti ? 'on' : '') + '">' + x.label + '</button>';
+    }).join('') + '</div>';
+    return '<div class="sec" data-sec="' + (i || 0) + '">' + (s.h ? '<div class="sec-h">' + s.h + '<small>' + (g.sub || s.sub || '') + '</small></div>' : '') +
+      bar + g.items.map(itemHtml).join('') + '</div>';
+  }
+  var body = s.items.map(itemHtml).join('');
+  if (s.fold) {   // 默认收起的区块：点标题展开
+    return '<div class="sec sec-fold' + (s.open ? ' open' : '') + '"><div class="sec-h fold-h" data-dfold="1"><span>' + s.h + '</span>' +
+      (s.sub ? '<small>' + s.sub + '</small>' : '') + '<i class="fold-arr"></i></div>' +
+      '<div class="fold-body">' + body + '</div></div>';
+  }
+  return '<div class="sec">' + (s.h ? '<div class="sec-h">' + s.h + (s.sub ? '<small>' + s.sub + '</small>' : '') + '</div>' : '<div style="height:8px"></div>') + body + '</div>';
+}
+
+// ===== 审批进度（页面最下方，默认折叠） =====
+function stepsOf(it) {
+  var f = it.flow, s = _state[it.id], tr = _trans[it.id], steps = [{ role: f.initRole || '流程发起', name: it.init, st: 'done', time: it.start, op: '' }];
+  f.chain.forEach(function (c, k) {
+    var st = 'todo', time = '', op = '';
+    if (k < f.at) { st = 'done'; time = addMin(it.start, 13 + k * 47); op = '同意'; }
+    else if (k === f.at) {
+      if (!s) st = 'doing';
+      else { st = s.st === 'ok' ? 'done' : 'reject'; time = s.time; op = s.op; }
+    } else if (k === f.at + 1 && s && s.st === 'ok') st = 'doing';
+    if (k !== f.at) {
+      if (k === f.at + 1 && signsOf(it.id, 'after').length) st = 'todo';
+      steps.push({ role: c[0], name: c[1], st: st, time: time, op: op });
+      return;
+    }
+    var bf = signsOf(it.id, 'before');
+    if (tr) {
+      // 已转交：本人节点记为完成，接收人节点审批中
+      steps.push({ role: c[0], name: c[1], st: 'done', time: tr.time, op: '转交给 ' + tr.who.join('、'), me: true, tag: '已转交' });
+      steps.push({ role: '转交审批', name: tr.who.join('、'), st: 'doing', op: tr.note, tag: '转交后由其审批' });
+    } else {
+      bf.forEach(function (g) {
+        g.who.forEach(function (nm, k) {
+          steps.push({ role: '加签审批', name: nm, st: k === 0 ? 'doing' : 'todo', op: g.note, tag: g.who.length > 1 ? ('前加签 · 第 ' + (k + 1) + ' 位') : '前加签 · 加签审批中' });
+        });
+      });
+      steps.push({ role: c[0], name: c[1], st: bf.length ? 'todo' : st, time: time, op: op, me: true, tag: bf.length ? '待加签人审批后处理' : '' });
+    }
+    (_copy[it.id] || []).forEach(function (g) { steps.push({ role: '抄送', name: g.who.join('、'), st: 'cc', time: g.time, op: g.note, tag: '已抄送' }); });
+    var _ai = 0;
+    signsOf(it.id, 'after').forEach(function (g) {
+      g.who.forEach(function (nm) {
+        steps.push({ role: '加签审批', name: nm, st: s && s.st === 'ok' && !_ai ? 'doing' : 'todo', op: g.note, tag: g.who.length > 1 ? ('后加签 · 第 ' + (_ai + 1) + ' 位') : '后加签' });
+        _ai++;
+      });
+    });
+  });
+  return steps;
+}
+function progHtml(it) {
+  var f = it.flow, s = _state[it.id], tr = _trans[it.id], total = f.chain.length, nx = nextOf(it), last = !nx, steps = stepsOf(it), bf = signsOf(it.id, 'before');
+  var right = tr ? '已转交' : !s ? '第 ' + (f.at + 1) + ' / ' + total + ' 步' : s.st === 'ok' ? (last ? '已全部通过' : '已流转') : '已退回';
+  var cur;
+  if (tr) cur = '<div class="prog-cur"><span>已转交至</span><b>' + tr.who.join('、') + '</b></div>';
+  else if (!s && bf.length) cur = '<div class="prog-cur"><span>加签审批中</span><b>' + bf[0].who[0] + (bf[0].who.length > 1 ? '（共 ' + bf[0].who.length + ' 人，按顺序审批）' : '') + '</b></div>';
+  else if (!s) cur = '<div class="prog-cur"><span>当前节点</span><b>' + f.chain[f.at][0] + ' · ' + f.chain[f.at][1] + '（我）</b></div>';
+  else if (s.st === 'ok') cur = '<div class="prog-cur ok"><span>' + (last ? '审批状态' : '已流转至') + '</span><b>' + (last ? '审批通过' : nx[0] + ' · ' + nx[1]) + '</b></div>';
+  else cur = '<div class="prog-cur back"><span>已退回至</span><b>' + (s.to === 'prev' && f.at ? f.chain[f.at - 1][0] + ' · ' + f.chain[f.at - 1][1] : '发起人 · ' + it.init) + '</b></div>';
+  var bar = '<div class="prog-bar">' + steps.filter(function (x) { return x.st !== 'cc'; }).map(function (x) { return '<i class="' + x.st + '"></i>'; }).join('') + '</div>';
+  var status = tr ? '<span class="st-warn">已转交</span>' : !s ? '<span class="st-warn">待审批</span>' : s.st === 'ok' ? (last ? '<span class="st-ok">审批通过</span>' : '<span class="st-warn">审批中</span>') : '<span class="st-no">已退回</span>';
+  var meta = '<div class="kv"><span>发起人</span><b>' + it.init + '</b></div>' +
+    (f.meta || []).map(function (m) { return '<div class="kv"><span>' + m[0] + '</span><b>' + m[1] + '</b></div>'; }).join('') +
+    '<div class="kv"><span>审批状态</span><b>' + status + '</b></div>';
+  var tl = '<div class="tl">' + steps.map(function (x) {
+    var tag = x.tag ? x.tag : x.st === 'doing' ? (x.me ? '待我审批' : '审批中') : x.st === 'todo' ? '待处理' : x.st === 'reject' ? '已退回' : (x.op === '' ? '已提交' : '已同意');
+    return '<div class="tl-i ' + x.st + '"><div class="tl-dot"></div><div class="tl-b"><div class="tl-r"><b>' + x.role + '</b><small>' + (x.time ? x.time.slice(5) : tag) + '</small></div>' +
+      '<div class="tl-n">' + x.name + (x.me && !s ? '（我）' : '') + (x.time ? ' · ' + tag : '') + '</div>' +
+      (x.op ? '<div class="tl-o' + (x.st === 'reject' ? ' reject' : '') + '">' + x.op + '</div>' : '') + '</div></div>';
+  }).join('') + '</div>' + (f.foot ? '<div class="note" style="margin-top:12px">' + f.foot + '</div>' : '');
+  return '<div class="prog" id="prog"><div class="prog-h"><b>审批进度</b><span>' + right + '</span></div>' + bar + cur + '<div class="prog-body">' + meta + tl + '</div></div>';
+}
+
+// ===== 审批单 =====
+function showDetail(id, keepTab) {
+  var it = byId(id); if (!it) return;
+  _cur = id;
+  if (!keepTab) _mtab[id] = 0;   // 进入页面时回到第一个标段；切标段重绘时保留
+  if ($('docSheet').classList.contains('on')) closeSheet();
+  if (id === 'deal') _dl = { mode: 'sup', open: -1, q: '', shown: 20, supAll: false };   // 成交明细：默认按供应商（全部收起），按明细视图可切换
+  var s = _state[id], p = it.proj, tr = _trans[id];
+  var bf = signsOf(id, 'before').length;
+  var pill = tr ? '<span class="pill wait">已转交</span>' : !s ? '<span class="pill wait">' + (bf ? '加签中' : '待我审批') + '</span>' : s.st === 'ok' ? '<span class="pill ok">已同意</span>' : '<span class="pill back">已退回</span>';
+  var h = '<div class="hero"><div class="hero-top"><span class="hero-type">' + it.type + ' · ' + it.node + '</span>' + pill + '</div>' +
+    '<div class="hero-name">' + p.name + '</div><div class="hero-code">' + p.code + '　' + p.biz + ' · ' + p.way + '</div>' +
+    (it.section ? '<div class="hero-sec">' + it.section + '</div>' : '') + '</div>';
+  if (it.keys && it.keys.length) h += '<div class="keys' + (it.keys1 ? ' keys-1' : '') + '">' + it.keys.map(function (k) { return '<div class="key' + (k[2] ? ' hl' : '') + (k[3] ? ' full' : '') + '"><span>' + k[0] + '</span><b>' + k[1] + '</b></div>'; }).join('') + '</div>';
+  it.secs.forEach(function (sc, si) { h += secHtml(sc, si); });
+  h += progHtml(it);
+  $('dBody').innerHTML = h;
+  $('dTitle').textContent = it.type;
+  $('actbar').hidden = !!s || !!bf || !!tr;
+  show('vDetail');
+  $('dScroll').scrollTop = 0;
+  markDir(id);
+}
+
+// ===== 审批操作 =====
+function openSheet(mode) {
+  var it = byId(_cur), f = it.flow;
+  _mode = mode;
+  var ok = mode === 'ok';
+  $('sTitle').textContent = ok ? '同意' : '退回';
+  var nx = nextOf(it);
+  $('sSub').textContent = ok ? (nx ? '同意后流转至：' + nx[0] + ' ' + nx[1] : '您是最后一个审批节点，同意后审批完成') : '退回后发起人可修改并重新提交';
+  $('sBackTo').style.display = ok ? 'none' : '';
+  $('seg').querySelector('[data-v="prev"]').style.display = f.at ? '' : 'none';
+  setSeg('init');
+  $('sLabel').innerHTML = ok ? '审批意见' : '<i>*</i>退回原因';
+  $('sText').value = ok ? '同意' : '';
+  $('sText').placeholder = ok ? '请输入审批意见（选填）' : '请输入退回原因（必填）';
+  $('quick').innerHTML = (ok ? OPINIONS : BACKS).map(function (q) { return '<button>' + q + '</button>'; }).join('');
+  $('sBtn').textContent = ok ? '确认同意' : '确认退回';
+  $('sBtn').className = 'submit' + (ok ? '' : ' red');
+  $('mask').classList.add('on'); $('sheet').classList.add('on');
+}
+function closeSheet() { $('mask').classList.remove('on'); ['sheet', 'moreSheet', 'pickSheet', 'docSheet', 'confirmSheet', 'orgSheet', 'ordSheet'].forEach(function (x) { $(x).classList.remove('on'); }); }
+// 通用确认弹层（如转交）
+var _cfCb = null;
+function confirmSheet(t, sub, okText, cb) {
+  _cfCb = cb;
+  $('cfTitle').textContent = t;
+  $('cfSub').innerHTML = sub;
+  $('cfOk').textContent = okText;
+  $('mask').classList.add('on'); $('confirmSheet').classList.add('on');
+}
+// 邀请函等长文本预览：弹层展示全文
+function openDoc(name) {
+  var x = DOCS[_cur]; if (!x) return;
+  $('docTitle').textContent = x.t;
+  $('docSub').textContent = x.s || '';
+  $('docBody').innerHTML = '<div class="doc">' + x.h + '</div>';
+  $('mask').classList.add('on'); $('docSheet').classList.add('on');
+  $('docBody').scrollTop = 0;
+}
+// ===== 更多：加签（前 / 后）/ 转交 / 抄送 =====
+function openMore() { $('mask').classList.add('on'); $('moreSheet').classList.add('on'); }
+function setPos(v) {
+  _pos = v;
+  Array.prototype.forEach.call($('pSeg').children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === v); });
+  $('pTip').textContent = POS_TIP[v];
+}
+function openPick(kind) {
+  _pick = kind;
+  var c = PICK[kind];
+  $('moreSheet').classList.remove('on');
+  $('pTitle').textContent = c.t;
+  $('pSub').textContent = c.sub;
+  $('pPos').style.display = kind === 'sign' ? '' : 'none';
+  if (kind === 'sign') setPos('before');
+  $('pLabel').innerHTML = '<i>*</i>' + c.label + '（组织架构 · 可多选）';
+  $('pTLabel').textContent = c.tl;
+  $('pText').value = '';
+  $('pText').placeholder = '请输入' + c.tl.replace('说明', '') + '说明（选填）';
+  _sel = []; renderSel();
+  $('pBtn').textContent = c.btn;
+  $('pickSheet').classList.add('on');
+}
+function submitPick() {
+  var c = PICK[_pick];
+  var who = _sel.slice();
+  if (!who.length) { toast(c.no || '请选择' + c.label); return; }
+  var note = $('pText').value.trim(), names = who.join('、');
+  closeSheet();
+  if (_pick === 'copy') {
+    (_copy[_cur] = _copy[_cur] || []).push({ who: who, note: note, time: nowStr() });
+    showDetail(_cur); toast('已抄送 ' + names + '，对方只能查看、不能操作');
+    return;
+  }
+  if (_pick === 'transfer') {
+    confirmSheet('确认转交', '将当前步骤转交给 <b>' + names + '</b>？<br>转交后由其在当前步骤审批，您无需再审批。', '确认转交', function () {
+      _trans[_cur] = { who: who, note: note, time: nowStr() };
+      showDetail(_cur);
+      $('rIc').className = 'ic';
+      $('rTitle').textContent = '已转交';
+      $('rText').innerHTML = '已将当前步骤转交给 <b>' + names + '</b>，<br>由其审批，您无需再审批；可在审批进度中查看后续进展。';
+      show('vResult');
+    });
+    return;
+  }
+  if (_pick === 'sign') {
+    if (who.length > 1) { openOrd(who, note); return; }
+    applySign(who, note);
+    return;
+  }
+}
+// ===== 加签：多人时先设置审核顺序 =====
+var _ordWho = [], _ordNote = '';
+function applySign(who, note) {
+  var names = who.join('、');
+  (_sign[_cur] = _sign[_cur] || []).push({ pos: _pos, who: who, note: note, time: nowStr() });
+  if (_pos === 'after') { showDetail(_cur); toast('已加签，' + names + ' 将在您同意后审批'); return; }
+  $('rIc').className = 'ic';
+  $('rTitle').textContent = '已加签';
+  $('rText').innerHTML = '已发送至 <b>' + names + '</b> 审批，<br>加签人同意后将回到您继续审批。';
+  show('vResult');
+}
+function openOrd(who, note) {
+  _ordWho = who.slice();
+  _ordNote = note || '';
+  $('pickSheet').classList.remove('on');
+  renderOrd();
+  $('ordSheet').classList.add('on');
+}
+function renderOrd() {
+  var h = '';
+  _ordWho.forEach(function (nm, i) {
+    h += '<div class="ord-row"><span class="ord-no">' + (i + 1) + '</span><span class="ord-nm">' + nm + '</span>' +
+      '<span class="ord-ops">' +
+      '<button class="ord-op" onclick="ordMove(' + i + ',-1)"' + (i === 0 ? ' disabled' : '') + '>上移</button>' +
+      '<button class="ord-op" onclick="ordMove(' + i + ',1)"' + (i === _ordWho.length - 1 ? ' disabled' : '') + '>下移</button>' +
+      '</span></div>';
+  });
+  $('ordList').innerHTML = h;
+}
+function ordMove(i, d) {
+  var j = i + d;
+  if (j < 0 || j >= _ordWho.length) return;
+  var t = _ordWho[i]; _ordWho[i] = _ordWho[j]; _ordWho[j] = t;
+  renderOrd();
+}
+function ordConfirm() {
+  if (!_ordWho.length) { toast('请选择加签人'); return; }
+  closeSheet();
+  applySign(_ordWho.slice(), _ordNote);
+}
+function setSeg(v) { Array.prototype.forEach.call($('seg').children, function (b) { b.classList.toggle('on', b.getAttribute('data-v') === v); }); }
+// 审批全部通过后的系统动作（取自电脑端各节点审批说明）
+var PASS_TEXT = {
+  notice: '，所有勾选标段将绑定共用同一个公告内容并正式对外发布',
+  invite: '，系统已向名单内投标人发送邀请函（站内信 + 短信）',
+  doc: '，系统自动发售招标文件',
+  issue: '，投标人审核结果锁定，审核通过的投标人可获取招标文件',
+  fail: '，系统按流标执行：全部标段终止，项目标记为招标失败',
+  tesum: '',
+  transfer: '，项目自动移交招标中心',
+  nego: '，请在议价记录中设置报价时间并发送给投标人',
+  winner: '，中标人确定完成',
+  deal: '，中标人确定完成'
+};
+function submitSheet() {
+  var txt = $('sText').value.trim();
+  if (_mode === 'back' && !txt) { toast('请填写退回原因'); return; }
+  var it = byId(_cur), f = it.flow;
+  var to = $('seg').querySelector('.on').getAttribute('data-v');
+  var nx = nextOf(it);
+  _state[_cur] = { st: _mode, op: txt || '同意', time: nowStr(), to: to };
+  closeSheet();
+  var ok = _mode === 'ok', last = !nx;
+  $('rIc').className = 'ic' + (ok ? '' : ' red');
+  $('rTitle').textContent = ok ? '已同意' : '已退回';
+  $('rText').innerHTML = ok
+    ? (last ? it.type + '已全部审批通过' + PASS_TEXT[it.id] + '。' : '已流转至下一节点<br><b>' + nx[0] + ' · ' + nx[1] + '</b>，系统已发送待办提醒。')
+    : '已退回至' + (to === 'prev' && f.at ? '上一节点 ' + f.chain[f.at - 1][1] : '发起人 ' + it.init) + '，<br>对方将收到站内信与短信提醒。';
+  show('vResult');
+}
+function resetDemo() { _state = {}; _sign = {}; _copy = {}; _trans = {}; showDetail(_cur || LIST[0].id); toast('演示状态已重置'); }
+
+// ===== 视图切换 =====
+function show(v) { ['vDetail', 'vResult'].forEach(function (x) { $(x).hidden = x !== v; }); }
+function markDir(id) {
+  Array.prototype.forEach.call($('dir').children, function (a) { a.classList.toggle('on', a.getAttribute('data-go') === id); });
+  $('mdir').value = id;
+}
+
+// 目录（电脑端左侧；手机端顶部下拉）
+$('dir').innerHTML = LIST.map(function (x) { return '<a data-go="' + x.id + '">' + x.type + '<small>' + x.node + (x.tag ? ' · ' + x.tag : '') + '</small></a>'; }).join('');
+$('mdir').innerHTML = LIST.map(function (x) { return '<option value="' + x.id + '">' + x.type + (x.id === 'deal' ? '（物资）' : '') + (x.tag ? '（' + x.tag + '）' : '') + '</option>'; }).join('');
+$('dir').addEventListener('click', function (e) { var a = e.target.closest('a'); if (a) showDetail(a.getAttribute('data-go')); });
+$('mdir').addEventListener('change', function () { showDetail(this.value); });
+$('dBody').addEventListener('click', function (e) {
+  if (e.target.closest('.prog-h')) { $('prog').classList.toggle('open'); return; }
+  var fh = e.target.closest('[data-dfold]');
+  if (fh) { fh.parentNode.classList.toggle('open'); return; }
+  var ac = e.target.closest('[data-acc-hd]');
+  if (ac) { ac.parentNode.classList.toggle('open'); return; }
+  var qh = e.target.closest('.qf-hd');
+  if (qh) {
+    var qb = qh.parentNode.querySelector('.qf-body');
+    if (qb) qb.classList.toggle('on');
+    var tg = qh.querySelector('[data-qfold]');
+    if (tg) tg.textContent = qb && qb.classList.contains('on') ? '收起' : '展开';
+    return;
+  }
+  var qv = e.target.closest('[data-quote]');
+  if (qv) { showQuote(+qv.getAttribute('data-quote')); return; }
+  var qk = e.target.closest('[data-qback]');
+  if (qk) { showDetail($('dBody').getAttribute('data-back') || 'deal'); return; }
+  var tb = e.target.closest('[data-mtab]');
+  if (tb) {
+    var mti = +tb.getAttribute('data-mti'), sc0 = $('dScroll'), top0 = sc0 ? sc0.scrollTop : 0;
+    _mtab[_cur] = mti;
+    showDetail(_cur, true);           // 保留当前标段，整页重绘（明细、全部单位报价、中标通知书同步）
+    if (sc0) sc0.scrollTop = top0;
+    return;
+  }
+  var mb = e.target.closest('[data-dmode]');
+  if (mb) {
+    _dl.mode = mb.getAttribute('data-dmode'); _dl.open = -1; _dl.shown = 20;
+    var tools = $('dlTools'); if (tools) tools.style.display = _dl.mode === 'all' ? '' : 'none';
+    var md = $('dlMode'); if (md) Array.prototype.forEach.call(md.children, function (b) { b.classList.toggle('on', b === mb); });
+    refreshDealList(); return;
+  }
+  var sa = e.target.closest('[data-dsupall]');
+  if (sa) { _dl.supAll = true; refreshDealList(); return; }
+  var m = e.target.closest('[data-dmore]');
+  if (m) { _dl.shown += 20; refreshDealList(); return; }
+  var l = e.target.closest('[data-dless]');
+  if (l) { _dl.shown = 20; refreshDealList(); return; }
+  var sr = e.target.closest('[data-dsup-row]');
+  if (sr && !e.target.closest('.dl-sup-open')) {
+    var k = +sr.getAttribute('data-dsup-row');
+    _dl.open = _dl.open === k ? -1 : k; _dl.shown = 20; refreshDealList(); return;
+  }
+  var pd = e.target.closest('[data-doc]');
+  if (pd) { openDoc(pd.getAttribute('data-doc')); return; }
+  var row = e.target.closest('.dl-row');
+  if (row) { row.classList.toggle('open'); return; }
+  var dl = e.target.closest('.af-dl'); if (dl) { toast('开始下载「' + dl.getAttribute('data-f') + '」'); return; }
+  var f = e.target.closest('.rc-a'); if (f) toast('正在打开「' + f.getAttribute('data-f') + '」');
+});
+$('dBody').addEventListener('input', function (e) {
+  if (e.target.id === 'dealQ') { _dl.q = e.target.value.trim(); _dl.shown = 20; refreshDealList(); }
+});
+$('cfOk').addEventListener('click', function () { closeSheet(); var cb = _cfCb; _cfCb = null; if (cb) cb(); });
+$('quick').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) $('sText').value = b.textContent; });
+$('pSeg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setPos(b.getAttribute('data-v')); });
+$('pSelField').addEventListener('click', openOrg);
+$('pSelChips').addEventListener('click', function (e) {
+  var i = e.target.closest('[data-rm]'); if (!i) return;
+  var n = i.getAttribute('data-rm');
+  _sel = _sel.filter(function (x) { return x !== n; }); renderSel();
+});
+$('orgList').addEventListener('click', function (e) {
+  var r = e.target.closest('[data-op]'); if (r) toggleOrg(r.getAttribute('data-op'));
+});
+$('orgDepts').addEventListener('click', function (e) {
+  var b = e.target.closest('button'); if (!b) return;
+  _orgDept = b.getAttribute('data-od'); renderOrgDepts(); renderOrgList();
+});
+$('orgQ').addEventListener('input', renderOrgList);
+$('seg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) setSeg(b.getAttribute('data-v')); });
+
+// URL hash 直达：#notice #invite #doc #issue #tesum #transfer #nego #winner #deal #fail
+var _h = location.hash.slice(1);
+showDetail(byId(_h) ? _h : LIST[0].id);
+</script>
+</body>
+</html>
+
