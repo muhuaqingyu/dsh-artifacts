@@ -769,7 +769,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
   </div>
   <div style="text-align:center;padding:10px 0">
     <button class="btn btn-default" style="min-width:100px" onclick="ttGo(-1)">返回列表</button>
-    <button class="btn btn-primary" style="min-width:120px;margin-left:16px" onclick="ttGo(1)">下一步：导入文件</button>
+    <button class="btn btn-primary" id="ttCfgNext" style="min-width:120px;margin-left:16px" onclick="ttGo(1)">下一步：导入文件</button>
   </div>
 </div>
 
@@ -801,7 +801,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
   <div class="tt-stepbar" data-step="2" style="display:flex;align-items:center;justify-content:center;padding:16px 40px;margin-bottom:16px;background:var(--white);border:1px solid var(--border-light);border-radius:6px"></div>
   <div id="ttOpenItemSlot"></div>
   <div style="text-align:center;margin-top:20px">
-    <button class="btn btn-default" style="padding:8px 28px" onclick="ttGo(1)">上一步</button>
+    <button class="btn btn-default" id="ttOpensetPrev" style="padding:8px 28px" onclick="ttGo(1)">上一步</button>
     <button class="btn btn-primary" id="ttOpensetNext" style="padding:8px 28px;margin-left:16px" onclick="ttGo(3)">下一步：评审办法设置</button>
   </div>
 </div>
@@ -856,7 +856,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
   </div>
   <div class="tt-eval-nav" style="text-align:center;margin-top:20px">
     <button class="btn btn-default" style="padding:8px 28px" onclick="ttGo(2)">上一步</button>
-    <button class="btn btn-primary" style="padding:8px 28px;margin-left:16px" onclick="ttGo(4)">下一步：上传至平台</button>
+    <button class="btn btn-primary" id="ttEvalNext" style="padding:8px 28px;margin-left:16px" onclick="ttGo(4)">下一步：上传至平台</button>
   </div>
 </div>
 
@@ -987,15 +987,18 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
   <!-- 数据表格 -->
   <div class="card">
     <div class="card-body" style="padding:0;overflow-x:auto">
-      <table class="data-table" style="min-width:1200px" id="bidApplyTable">
+      <table class="data-table" style="min-width:1460px" id="bidApplyTable">
         <thead>
           <tr>
             <th style="width:50px">序号</th>
-            <th style="width:180px">项目编码</th>
-            <th>招标项目名称</th>
+            <th style="width:165px">项目编码</th>
+            <th style="width:165px">招标项目编号</th>
+            <th style="min-width:240px">招标项目名称</th>
             <th style="width:100px">业务类型</th>
+            <th style="width:110px">是否有技术标</th>
+            <th style="width:100px">采购方式</th>
             <th style="width:100px">立项来源</th>
-            <th style="width:160px">提交时间 ↕</th>
+            <th style="width:150px">提交时间 ↕</th>
             <th style="width:80px">经办人</th>
             <th style="width:240px">操作</th>
           </tr>
@@ -1004,8 +1007,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>1</td>
             <td>YZJ-ZB-2026-10-012</td>
+            <td>YZJ-ZB-2026-10-012</td>
             <td>冻干制剂车间二期土建及机电安装工程</td>
             <td>工程设备类</td>
+            <td><span class="tag tag-info" style="font-size:10px;padding:1px 5px">有技术标</span></td>
+            <td><span class="tag tag-primary" style="font-size:10px;padding:1px 5px">公开招标</span></td>
             <td><span class="system-tag pms">PMS</span></td>
             <td>2026-10-11 08:33:18</td>
             <td>王基建</td>
@@ -1014,8 +1020,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>2</td>
             <td>YZJ-ZB-2026-10-011</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td>集团SRM系统升级改造项目（两阶段）</td>
             <td>综合服务类</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td><span class="system-tag pms">PMS</span></td>
             <td>2026-10-10 18:04:15</td>
             <td>刘IT</td>
@@ -1024,8 +1033,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>3</td>
             <td>YZJ-ZB-2026-10-010</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td>新药非临床安全性评价研究（GLP委外）</td>
             <td>综合服务类</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td><span class="system-tag oa">CMS</span></td>
             <td>2026-10-10 10:21:45</td>
             <td>陈研发</td>
@@ -1034,8 +1046,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>4</td>
             <td>YZJ-ZB-2026-10-009</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td>2026年四季度原辅料（微晶纤维素）集中采购</td>
             <td>物资采购类</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td><span class="system-tag srm">SRM</span></td>
             <td>2026-10-09 18:35:34</td>
             <td>赵采购</td>
@@ -1044,8 +1059,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>5</td>
             <td>YZJ-ZB-2026-10-008</td>
+            <td>YZJ-ZB-2026-10-008</td>
             <td>2027年度学术推广物料（印刷品类）集中招标</td>
             <td>综合服务类</td>
+            <td><span class="tag tag-danger" style="font-size:10px;padding:1px 5px">无技术标</span></td>
+            <td><span class="tag tag-primary" style="font-size:10px;padding:1px 5px">议价采购</span></td>
             <td><span class="system-tag oa">CMS</span></td>
             <td>2026-10-09 17:41:04</td>
             <td>孙市场</td>
@@ -1054,8 +1072,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>6</td>
             <td>YZJ-ZB-2026-10-007</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td>2026年10-12月中药材（黄芪等6个品规）采购</td>
             <td>物资采购类</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td><span class="system-tag srm">SRM</span></td>
             <td>2026-10-08 17:09:14</td>
             <td>周药材</td>
@@ -1064,8 +1085,11 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
           <tr>
             <td>7</td>
             <td>YZJ-ZB-2026-10-006</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td>QC实验室高效液相色谱柱采购（手工建项）</td>
             <td>物资采购类</td>
+            <td><span style="color:var(--text-muted)">—</span></td>
+            <td><span style="color:var(--text-muted)">—</span></td>
             <td><span class="system-tag yzc">线下</span></td>
             <td>2026-10-08 09:12:33</td>
             <td>赵采购</td>
@@ -9061,6 +9085,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
               <tr>
                 <th style="width:40px;text-align:center">序号</th>
                 <th>资料名称</th>
+<th style="width:170px">归档形式</th>
                 <th style="width:70px;text-align:center">资料状态</th>
                 <th>提交时间</th>
                 <th>提交人</th>
@@ -9069,77 +9094,77 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
             </thead>
             <tbody>
               <tr>
-                <td style="text-align:center">1</td><td>招标公告</td>
+                <td style="text-align:center">1</td><td>招标公告</td><td style="color:var(--text-secondary)">PDF（公告快照）</td>
                 <td style="text-align:center;color:var(--success)">正常</td>
                 <td>2026-10-14 15:37:00</td><td>张采购员</td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">2</td><td>招标公告附件</td>
+                <td style="text-align:center">2</td><td>招标公告附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">3</td><td>招标文件</td>
+                <td style="text-align:center">3</td><td>招标文件</td><td style="color:var(--text-secondary)">原件 + PDF 快照</td>
                 <td style="text-align:center;color:var(--success)">正常</td>
                 <td>2026-10-14 15:38:01</td><td>扬子江药业集团有限公司</td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">4</td><td>招标文件附件</td>
+                <td style="text-align:center">4</td><td>招标文件附件</td><td style="color:var(--text-secondary)">原件（压缩包）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">5</td><td>投标文件</td>
+                <td style="text-align:center">5</td><td>投标文件</td><td style="color:var(--text-secondary)">原件（加密投标文件）</td>
                 <td style="text-align:center;color:var(--success)">正常</td>
                 <td>2026-10-28 15:45:03</td><td>张采购员</td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">6</td><td>答疑澄清附件</td>
+                <td style="text-align:center">6</td><td>答疑澄清附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">7</td><td>中标候选人公示</td>
+                <td style="text-align:center">7</td><td>中标候选人公示</td><td style="color:var(--text-secondary)">PDF（公示快照）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">8</td><td>中标候选人公示附件</td>
+                <td style="text-align:center">8</td><td>中标候选人公示附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">9</td><td>中标公告</td>
+                <td style="text-align:center">9</td><td>中标公告</td><td style="color:var(--text-secondary)">PDF（公告快照）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">10</td><td>中标公告附件</td>
+                <td style="text-align:center">10</td><td>中标公告附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">11</td><td>中标通知书</td>
+                <td style="text-align:center">11</td><td>中标通知书</td><td style="color:var(--text-secondary)">PDF（含电子签章）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">12</td><td>中标通知书附件</td>
+                <td style="text-align:center">12</td><td>中标通知书附件</td><td style="color:var(--text-secondary)">原件（签章扫描件）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">13</td><td>流标公告、公示</td>
+                <td style="text-align:center">13</td><td>流标公告、公示</td><td style="color:var(--text-secondary)">PDF（公示快照）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">14</td><td>流标附件</td>
+                <td style="text-align:center">14</td><td>流标附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
               <tr>
-                <td style="text-align:center">15</td><td>流标原因</td>
+                <td style="text-align:center">15</td><td>流标原因</td><td style="color:var(--text-secondary)">数据 + PDF（说明页）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
                 <td></td><td></td><td></td>
               </tr>
@@ -9157,6 +9182,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
               <tr>
                 <th style="width:40px;text-align:center">序号</th>
                 <th>资料名称</th>
+<th style="width:170px">归档形式</th>
                 <th>提交时间</th>
                 <th>提交人</th>
                 <th>操作</th>
@@ -9164,47 +9190,47 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
             </thead>
             <tbody>
               <tr>
-                <td style="text-align:center">1</td><td>开标一览表.pdf</td>
+                <td style="text-align:center">1</td><td>开标一览表.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 开标一览表.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">2</td><td>评标报告.pdf</td>
+                <td style="text-align:center">2</td><td>评标报告.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 评标报告.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">3</td><td>技术.pdf</td>
+                <td style="text-align:center">3</td><td>技术.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 技术.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">4</td><td>评审纪律表.pdf</td>
+                <td style="text-align:center">4</td><td>评审纪律表.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 评审纪律表.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">5</td><td>商务评审.pdf</td>
+                <td style="text-align:center">5</td><td>商务评审.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 商务评审.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">6</td><td>符合性.pdf</td>
+                <td style="text-align:center">6</td><td>符合性.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 符合性.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">7</td><td>评标结果汇总.pdf</td>
+                <td style="text-align:center">7</td><td>评标结果汇总.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 评标结果汇总.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">8</td><td>报价.pdf</td>
+                <td style="text-align:center">8</td><td>报价.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 报价.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
-                <td style="text-align:center">9</td><td>评委签到表.pdf</td>
+                <td style="text-align:center">9</td><td>评委签到表.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
                 <td>📄 评委签到表.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
               </tr>
@@ -9214,7 +9240,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
       </div>
 
       <!-- 其他附件 -->
-      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">其他附件
+      <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">其他附件 <span style="font-size:12px;font-weight:400;color:var(--text-secondary)">归档形式：原件（保留原格式）</span>
         <button class="btn btn-default btn-sm" style="color:var(--accent);border-color:var(--accent)">上传附件</button>
       </div>
       <div class="card" style="margin-bottom:24px">
@@ -9238,7 +9264,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
       </div>
 
       <!-- 归档压缩附件 -->
-      <div class="section-title">归档压缩附件</div>
+      <div class="section-title">归档压缩附件 <span style="font-size:12px;font-weight:400;color:var(--text-secondary)">归档形式：ZIP 压缩包（整体打包，可本地留存）</span></div>
       <div class="card" style="margin-bottom:24px">
         <div class="card-body" style="padding:0;overflow-x:auto">
           <table class="data-table">
@@ -9246,13 +9272,14 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
               <tr>
                 <th style="width:40px;text-align:center">序号</th>
                 <th>资料名称</th>
+<th style="width:170px">归档形式</th>
                 <th>提交时间</th>
                 <th>提交人</th>
                 <th>操作</th>
               </tr>
             </thead>
             <tbody>
-              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:40px"><div style="font-size:36px;opacity:.25;margin-bottom:6px">📦</div>暂无数据</td></tr>
+              <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px"><div style="font-size:36px;opacity:.25;margin-bottom:6px">📦</div>暂无数据</td></tr>
             </tbody>
           </table>
         </div>
@@ -10731,16 +10758,16 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
         <div style="display:flex;flex-direction:column;gap:8px">
           <label class="radio-item" style="font-weight:600"><input type="checkbox" checked onchange="toggleBidArchiveAll(this)"> 全部</label>
           <div style="padding-left:24px;display:flex;flex-direction:column;gap:6px">
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价邀请函</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 邀请情况</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅聊天记录</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 确定成交人</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 结果公示</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 合同管理</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 变更</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 在线问答</label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 重新竞价/项目终止</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价邀请函 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 邀请情况 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅 <span style="font-size:11px;color:var(--text-secondary)">PDF + 数据</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅聊天记录 <span style="font-size:11px;color:var(--text-secondary)">—（无来源）</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 确定成交人 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 结果公示 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 合同管理 <span style="font-size:11px;color:var(--text-secondary)">原件 + PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 变更 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 在线问答 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 重新竞价/项目终止 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
           </div>
         </div>
       </div>
@@ -18921,9 +18948,9 @@ function baFilter() {
   if (from && to && from > to) { _toast('提交时间的开始日期不能晚于结束日期'); return; }
   var rows = document.querySelectorAll('#bidApplyTable tbody tr'), shown = 0, all = !kw && !type && !src && !hd && !from && !to;
   rows.forEach(function (r) {
-    var c = function (i) { return (r.cells[i] ? r.cells[i].textContent : '').trim(); }, d = c(5).slice(0, 10);
-    var ok = (!kw || c(1).indexOf(kw) >= 0 || c(2).indexOf(kw) >= 0) && (!type || c(3) === type) && (!src || c(4) === src)
-      && (!hd || c(6).indexOf(hd) >= 0) && (!from || d >= from) && (!to || d <= to);
+    var c = function (i) { return (r.cells[i] ? r.cells[i].textContent : '').trim(); }, d = c(8).slice(0, 10);
+    var ok = (!kw || c(1).indexOf(kw) >= 0 || c(2).indexOf(kw) >= 0 || c(3).indexOf(kw) >= 0) && (!type || c(4) === type) && (!src || c(7) === src)
+      && (!hd || c(9).indexOf(hd) >= 0) && (!from || d >= from) && (!to || d <= to);
     r.style.display = ok ? '' : 'none'; if (ok) shown++;
   });
   document.getElementById('baEmpty').style.display = shown ? 'none' : '';
@@ -19929,6 +19956,19 @@ function dsExportBid() {
 // ===== 7补.208 原型版本更新记录：数据由《原型迭代改动记录（需求文档素材）.md》生成（gen_verlog.py），每次更新原型后重新生成 =====
 /* VERLOG-BEGIN */
 var _VER_LOG = [
+{
+"no": "7补.314",
+"d": "2026-11-25",
+"t": "归档清单新增「归档形式」列，明确每项内容的下载与本地留存形式",
+"s": "项目归档资料清单 15 条、开评标文件 9 条各新增一列「归档形式」：公告与公示为 PDF（快照），附件类为原件（保留原格式，压缩包/签章扫描件单独标注），招标文件为原件 + PDF 快照，投标文件为原件（加密），流标原因为数据 + PDF 说明页，开评标文件统一为 PDF（系统生成）。其他附件与归档压缩附件在标题右侧标明形式（原件 / ZIP 压缩包），竞价归档 10 个复选项在名称后直接标出形式。目的是让每类归档内容都能明确「以什么形式下载、能不能本地留存」，便于与技术方确认导出实现。",
+},
+  {"no": "7补.315", "d": "2026-11-24", "t": "商务标发布进入招标文件制作：去掉「导入文件」「上传至平台」步骤，评审办法设置下一步即文件上传", "s": "从商务标发布节点入口进入招标文件制作工具时，步骤条只保留「项目配置 → 开标项设置 → 评审办法设置」三步，不再出现「导入文件」与「上传至平台」；项目配置页下一步直达开标项设置，开标项设置上一步回到项目配置；评审办法设置页右下按钮改为「文件上传」，点击后与原「上传至平台」页的文件上传按钮完全同一逻辑（校验招标文件已上传、开标项至少一条、商务标评审步骤已设置，二次确认后写入上传时间并提示「招标文件已上传至平台」）；技术标流程仍为 5 步不变。"},
+{
+"no": "7补.314",
+"d": "2026-11-23",
+"t": "招标申请列表新增招标项目编号、是否有技术标、采购方式三列",
+"s": "招标申请列表由 8 列改为 11 列：序号 / 项目编码 / 招标项目编号 / 招标项目名称 / 业务类型 / 是否有技术标 / 采购方式 / 立项来源 / 提交时间 / 经办人 / 操作。三列初始为空（显示「—」），在发起采购节点选择采购方式、填写招标项目编号、选择是否有技术标后，提交时自动回填到对应列；原先挂在项目编码下方的「采购方式标签 + 招标项目编号小字 + 技术标标签」三处小字全部去掉，项目编码列只保留编码本身。同步调整行内单元格索引：招标申请详情的编码/名称/业务类型/来源/提交时间/经办人、发起采购弹窗的带出值、列表筛选（关键字改查编码/编号/名称，业务类型 4、来源 7、经办人 9、提交时间 8）。"
+},
 {
 "no": "7补.313",
 "d": "2026-11-20",
@@ -22403,9 +22443,11 @@ function openStartPurchase(linkEl) {
   _spRow = linkEl.closest('tr');
   var cells = _spRow.querySelectorAll('td');
   document.getElementById('spCode').textContent = cells[1].textContent.trim();
-  document.getElementById('spName').textContent = cells[2].textContent.trim();
-  document.getElementById('spType').textContent = cells[3].textContent.trim();
-  document.getElementById('spProjCode').value = cells[1].textContent.trim().split(/\s+/)[0];   // 7补.110 默认带入招标申请编号
+  document.getElementById('spName').textContent = cells[3].textContent.trim();
+  document.getElementById('spType').textContent = cells[4].textContent.trim();
+  // 7补.110 默认带入招标申请编号；已发起过的行带入已填的招标项目编号
+  var _existNum = cells[2] ? cells[2].textContent.trim() : '';
+  document.getElementById('spProjCode').value = (_existNum && _existNum !== '—') ? _existNum : cells[1].textContent.trim().split(/\s+/)[0];
   _vcStartTip(cells[1].textContent.trim());
   // 是否有技术标：按业务类型设置默认值（物资类=无，其余=有）
   applyTechBidDefault();
@@ -22525,13 +22567,12 @@ function submitStartPurchase() {
     // 操作列变为"已发起"
     var opCell = _spRow.cells[_spRow.cells.length - 1];
     opCell.innerHTML = '<span class="tag tag-success">已发起</span> <span class="link" onclick="showBidApplyDetail(this)">详情</span>';
-    // 在行内追加方式标识（演示：项目名称后追加标签）
+    // 发起后回填三个独立列：招标项目编号 / 是否有技术标 / 采购方式
     var tagColor = { open: 'tag-primary', invite: 'tag-warning', nego: 'tag-primary' }[_spMode] || 'tag-primary';
-    _spRow.cells[1].innerHTML += ' <span class="tag ' + tagColor + '" style="font-size:10px;padding:1px 5px">' + modeText + '</span>';
     _spRow.setAttribute('data-proj-code', projCode);
-    _spRow.cells[1].innerHTML += '<div style="font-size:11px;color:var(--text-muted)">招标项目编号：' + projCode + '</div>';
-    // 技术标标识（演示）
-    _spRow.cells[1].innerHTML += ' <span class="tag ' + (techBid === 'yes' ? 'tag-info' : 'tag-danger') + '" style="font-size:10px;padding:1px 5px">' + (techBid === 'yes' ? '技术标' : '无技术标') + '</span>';
+    if (_spRow.cells[2]) _spRow.cells[2].innerHTML = projCode;
+    if (_spRow.cells[5]) _spRow.cells[5].innerHTML = '<span class="tag ' + (techBid === 'yes' ? 'tag-info' : 'tag-danger') + '" style="font-size:10px;padding:1px 5px">' + (techBid === 'yes' ? '有技术标' : '无技术标') + '</span>';
+    if (_spRow.cells[6]) _spRow.cells[6].innerHTML = '<span class="tag ' + tagColor + '" style="font-size:10px;padding:1px 5px">' + modeText + '</span>';
   }
   var msg = '已发起采购：' + name + '（招标项目编号 ' + projCode + '）\n采购方式：' + modeText;
   msg += '\n是否有技术标：' + (techBid === 'yes' ? '有（技术标评审 → 移交 → 商务标）' : '无（直接进入商务标价格竞争）');
@@ -22547,16 +22588,16 @@ function toggleNbaSection(hdr) {
   if (body) body.style.display = hdr.classList.contains('collapsed') ? 'none' : '';
 }
 
-// 招标申请详情：按行数据回填全部字段（列表列：0序号/1编码/2名称/3业务类型/4来源/5提交时间/6经办人）
+// 招标申请详情：按行数据回填全部字段（列表列：0序号/1编码/2招标项目编号/3名称/4业务类型/5是否有技术标/6采购方式/7来源/8提交时间/9经办人）
 function showBidApplyDetail(linkEl) {
   var row = linkEl.closest('tr');
   if (!row) return;
   var cells = row.querySelectorAll('td');
   var code = cells[1] ? cells[1].textContent.trim().split(/\s+/)[0] : '';
-  var name = cells[2] ? cells[2].textContent.replace(/\s*(公开招标|邀请招标|议价采购|技术标|无技术标|分类预审[^\s]*)\s*/g, '').trim() : '';
-  var type = cells[3] ? cells[3].textContent.trim() : '';
-  var submitTime = cells[5] ? cells[5].textContent.trim() : '';
-  var declarer = cells[6] ? cells[6].textContent.trim() : '';
+  var name = cells[3] ? cells[3].textContent.replace(/\s*(公开招标|邀请招标|议价采购|技术标|无技术标|分类预审[^\s]*)\s*/g, '').trim() : '';
+  var type = cells[4] ? cells[4].textContent.trim() : '';
+  var submitTime = cells[8] ? cells[8].textContent.trim() : '';
+  var declarer = cells[9] ? cells[9].textContent.trim() : '';
 
   // 静态演示数据（PMS/CMS/SRM 来源行的完整字段）
   var demo = {
@@ -22593,10 +22634,10 @@ function showBidApplyDetail(linkEl) {
   set('badAmount', d.amount || '');
   set('badDesc', d.desc || '');
   // 来源为线下的新行：申报人即经办，推送状态未推送
-  var srcTag = cells[4] ? cells[4].textContent.trim() : '';
+  var srcTag = cells[7] ? cells[7].textContent.trim() : '';
 
   // 招标明细：7补.101 所有业务类型都展示（物资 / 工程 / 服务明细）
-  var srcTag2 = cells[4] ? cells[4].textContent.trim() : '';
+  var srcTag2 = cells[7] ? cells[7].textContent.trim() : '';
   var isSrmOrMat = true;
   var _bk = _nbaKindOf(type), _bc = _SD_CFG[_bk];
   [['badMatTitle', _bc.title]].forEach(function (x) { var el = document.getElementById(x[0]); if (el) el.textContent = x[1]; });
@@ -32146,6 +32187,11 @@ function ttRenderList() {
 }
 // 只保留一个「招标文件制作」页签
 function ttGo(i) {
+  // 7补.315 商务标流程（从商务标发布进入）：不设「导入文件」「上传至平台」步骤
+  if (_tt.stage === 'biz' && i >= 0) {
+    if (i === 4) { if (typeof ttUpload === 'function') ttUpload(); return; }
+    if (i === 1) { i = 2; }
+  }
   var pg = i < 0 ? 'tender-file-make' : _TT_PAGES[i];
   for (var k = openTabs.length - 1; k >= 0; k--) if ((openTabs[k].page === 'tender-file-make' || openTabs[k].page.indexOf('tender-tool-') === 0) && openTabs[k].page !== pg) openTabs.splice(k, 1);
   navTo(pg, document.querySelector('.sidebar .menu-item[data-page="tender-file-make"]'));
@@ -32249,7 +32295,7 @@ function _ttOnShow(page) {
   });
   document.querySelectorAll('#page-' + page + ' .tt-stepbar').forEach(function (el) {
     var h = '';
-    var vis = _TT_STEPS.map(function (t, i) { return i; });   // 7补.150 商务标流程恢复评审办法设置步骤
+    var vis = biz ? [0, 2, 3] : _TT_STEPS.map(function (t, i) { return i; });   // 7补.315 商务标流程：去掉「导入文件」「上传至平台」
     vis.forEach(function (i, vk) {
       var t = _TT_STEPS[i], f = i > idx;
       h += '<div style="display:flex;flex-direction:column;align-items:center;min-width:80px;cursor:pointer" onclick="ttGo(' + i + ')">' +
@@ -32259,6 +32305,19 @@ function _ttOnShow(page) {
     });
     el.innerHTML = h;
   });
+  // 7补.315 商务标流程：配置页下一步直达开标项设置；评审办法设置页下一步=文件上传
+  var cfgNext = document.getElementById('ttCfgNext');
+  if (cfgNext) {
+    cfgNext.textContent = biz ? '下一步：开标项设置' : '下一步：导入文件';
+    cfgNext.setAttribute('onclick', biz ? 'ttGo(2)' : 'ttGo(1)');
+  }
+  var opPrev = document.getElementById('ttOpensetPrev');
+  if (opPrev) opPrev.setAttribute('onclick', biz ? 'ttGo(0)' : 'ttGo(1)');
+  var evNext = document.getElementById('ttEvalNext');
+  if (evNext) {
+    evNext.textContent = biz ? '文件上传' : '下一步：上传至平台';
+    evNext.setAttribute('onclick', biz ? 'ttUpload()' : 'ttGo(4)');
+  }
   if (page === 'tender-tool-config') {
     document.getElementById('ttCfgName').textContent = _tt.name; document.getElementById('ttCfgId').textContent = _tt.pid;
     document.getElementById('ttCfgWay').textContent = _tt.way; document.getElementById('ttCfgType').textContent = _ttTypeName(_tt.mode);
