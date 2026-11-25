@@ -8382,7 +8382,17 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
         </div>
       </div>
 
-      <!-- 候选人名单（商务标视角维护；技术标视角隐藏） -->
+      <!-- 公示附件（归档清单「中标候选人公示附件」的来源） -->
+<div class="section-title">公示附件 <span style="font-size:12px;font-weight:400;color:var(--text-secondary)">原件（保留原格式），随公示一并归档</span></div>
+<div style="background:var(--white);padding:14px 16px;border:1px solid var(--border-light);border-radius:4px;margin-bottom:20px">
+  <div class="form-item">
+    <span class="form-label" style="min-width:110px;text-align:right">公示附件:</span>
+    <button class="btn btn-default btn-sm" style="color:var(--accent);border-color:var(--accent)" onclick="_toast('演示环境：请选择公示附件')">上传附件</button>
+    <span style="font-size:11px;color:var(--text-muted);margin-left:8px">可上传 pdf|doc|docx|xls|xlsx|jpg|png|zip，单个不超过 50M；本节点上传的附件将归档到「中标候选人公示附件」</span>
+  </div>
+</div>
+
+<!-- 候选人名单（商务标视角维护；技术标视角隐藏） -->
       <div id="candidateListBox">
       <!-- 中标候选人列表（仅展示当前标段候选人） -->
       <div class="section-title" style="display:flex;align-items:center;gap:8px">中标候选人列表 <span style="font-size:12px;font-weight:400;color:var(--accent)">（请勾选中标候选人，仅展示当前标段）</span>
@@ -9094,80 +9104,65 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
             </thead>
             <tbody>
               <tr>
-                <td style="text-align:center">1</td><td>招标公告</td><td style="color:var(--text-secondary)">PDF（公告快照）</td>
+                <td style="text-align:center">1</td><td><span class="link" onclick="arcOpen('招标公告')">招标公告</span></td><td style="color:var(--text-secondary)">PDF（公告快照）</td>
                 <td style="text-align:center;color:var(--success)">正常</td>
-                <td>2026-10-14 15:37:00</td><td>张采购员</td><td></td>
-              </tr>
+                <td>2026-10-14 15:37:00</td><td>张采购员</td><td><span class="link" onclick="arcOpen('招标公告')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">2</td><td>招标公告附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
+                <td style="text-align:center">2</td><td><span class="link" onclick="arcOpen('招标公告附件')">招标公告附件</span></td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('招标公告')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">3</td><td>招标文件</td><td style="color:var(--text-secondary)">原件 + PDF 快照</td>
+                <td style="text-align:center">3</td><td><span class="link" onclick="arcOpen('招标文件')">招标文件</span></td><td style="color:var(--text-secondary)">原件 + PDF 快照</td>
                 <td style="text-align:center;color:var(--success)">正常</td>
-                <td>2026-10-14 15:38:01</td><td>扬子江药业集团有限公司</td><td></td>
-              </tr>
+                <td>2026-10-14 15:38:01</td><td>扬子江药业集团有限公司</td><td><span class="link" onclick="arcOpen('招标文件')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">4</td><td>招标文件附件</td><td style="color:var(--text-secondary)">原件（压缩包）</td>
+                <td style="text-align:center">4</td><td><span class="link" onclick="arcOpen('招标文件附件')">招标文件附件</span></td><td style="color:var(--text-secondary)">原件（压缩包）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('招标文件')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">5</td><td>投标文件</td><td style="color:var(--text-secondary)">原件（加密投标文件）</td>
+                <td style="text-align:center">5</td><td><span class="link" onclick="arcOpen('投标文件')">投标文件</span></td><td style="color:var(--text-secondary)">原件（加密投标文件）</td>
                 <td style="text-align:center;color:var(--success)">正常</td>
-                <td>2026-10-28 15:45:03</td><td>张采购员</td><td></td>
-              </tr>
+                <td>2026-10-28 15:45:03</td><td>张采购员</td><td><span class="link" onclick="arcOpen('投标文件')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">6</td><td>答疑澄清附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
+                <td style="text-align:center">6</td><td><span class="link" onclick="arcOpen('答疑澄清附件')">答疑澄清附件</span></td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('答疑澄清附件')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">7</td><td>中标候选人公示</td><td style="color:var(--text-secondary)">PDF（公示快照）</td>
+                <td style="text-align:center">7</td><td><span class="link" onclick="arcOpen('中标候选人公示')">中标候选人公示</span></td><td style="color:var(--text-secondary)">PDF（公示快照）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('中标候选人公示')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">8</td><td>中标候选人公示附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
+                <td style="text-align:center">8</td><td><span class="link" onclick="arcOpen('中标候选人公示附件')">中标候选人公示附件</span></td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('中标候选人公示')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">9</td><td>中标公告</td><td style="color:var(--text-secondary)">PDF（公告快照）</td>
+                <td style="text-align:center">9</td><td><span class="link" onclick="arcOpen('中标公告')">中标公告</span></td><td style="color:var(--text-secondary)">PDF（公告快照）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('中标公告')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">10</td><td>中标公告附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
+                <td style="text-align:center">10</td><td><span class="link" onclick="arcOpen('中标公告附件')">中标公告附件</span></td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('中标公告')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">11</td><td>中标通知书</td><td style="color:var(--text-secondary)">PDF（含电子签章）</td>
+                <td style="text-align:center">11</td><td><span class="link" onclick="arcOpen('中标通知书')">中标通知书</span></td><td style="color:var(--text-secondary)">PDF（含电子签章）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('中标通知书')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">12</td><td>中标通知书附件</td><td style="color:var(--text-secondary)">原件（签章扫描件）</td>
+                <td style="text-align:center">12</td><td><span class="link" onclick="arcOpen('中标通知书附件')">中标通知书附件</span></td><td style="color:var(--text-secondary)">原件（签章扫描件）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('中标通知书')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">13</td><td>流标公告、公示</td><td style="color:var(--text-secondary)">PDF（公示快照）</td>
+                <td style="text-align:center">13</td><td><span class="link" onclick="arcOpen('流标公告、公示')">流标公告、公示</span></td><td style="color:var(--text-secondary)">PDF（公示快照）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('流标公告、公示')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">14</td><td>流标附件</td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
+                <td style="text-align:center">14</td><td><span class="link" onclick="arcOpen('流标附件')">流标附件</span></td><td style="color:var(--text-secondary)">原件（保留原格式）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('流标附件')">查看</span></td></tr>
               <tr>
-                <td style="text-align:center">15</td><td>流标原因</td><td style="color:var(--text-secondary)">数据 + PDF（说明页）</td>
+                <td style="text-align:center">15</td><td><span class="link" onclick="arcOpen('流标原因')">流标原因</span></td><td style="color:var(--text-secondary)">数据 + PDF（说明页）</td>
                 <td style="text-align:center;color:var(--text-muted)">无</td>
-                <td></td><td></td><td></td>
-              </tr>
+                <td></td><td></td><td><span class="link" onclick="arcOpen('流标原因')">查看</span></td></tr>
             </tbody>
           </table>
         </div>
@@ -9192,47 +9187,47 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
               <tr>
                 <td style="text-align:center">1</td><td>开标一览表.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 开标一览表.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('开标一览表.pdf')">开标一览表.pdf</span> &nbsp;<span class="link" onclick="arcOpen('开标一览表.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('开标一览表.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">2</td><td>评标报告.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 评标报告.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('评标报告.pdf')">评标报告.pdf</span> &nbsp;<span class="link" onclick="arcOpen('评标报告.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('评标报告.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">3</td><td>技术.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 技术.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('技术.pdf')">技术.pdf</span> &nbsp;<span class="link" onclick="arcOpen('技术.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('技术.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">4</td><td>评审纪律表.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 评审纪律表.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('评审纪律表.pdf')">评审纪律表.pdf</span> &nbsp;<span class="link" onclick="arcOpen('评审纪律表.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('评审纪律表.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">5</td><td>商务评审.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 商务评审.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('商务评审.pdf')">商务评审.pdf</span> &nbsp;<span class="link" onclick="arcOpen('商务评审.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('商务评审.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">6</td><td>符合性.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 符合性.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('符合性.pdf')">符合性.pdf</span> &nbsp;<span class="link" onclick="arcOpen('符合性.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('符合性.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">7</td><td>评标结果汇总.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 评标结果汇总.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('评标结果汇总.pdf')">评标结果汇总.pdf</span> &nbsp;<span class="link" onclick="arcOpen('评标结果汇总.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('评标结果汇总.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">8</td><td>报价.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 报价.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('报价.pdf')">报价.pdf</span> &nbsp;<span class="link" onclick="arcOpen('报价.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('报价.pdf')" style="font-size:11px">下载</span></td>
               </tr>
               <tr>
                 <td style="text-align:center">9</td><td>评委签到表.pdf</td><td style="color:var(--text-secondary)">PDF（系统生成）</td>
                 <td>2026-10-14 15:52:52</td><td>张采购员</td>
-                <td>📄 评委签到表.pdf &nbsp;<span class="link" style="font-size:11px">预览</span> <span class="link" style="font-size:11px">下载</span></td>
+                <td>📄 <span class="link" onclick="arcOpen('评委签到表.pdf')">评委签到表.pdf</span> &nbsp;<span class="link" onclick="arcOpen('评委签到表.pdf')" style="font-size:11px">预览</span> <span class="link" onclick="arcDownload('评委签到表.pdf')" style="font-size:11px">下载</span></td>
               </tr>
             </tbody>
           </table>
@@ -9241,7 +9236,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
 
       <!-- 其他附件 -->
       <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">其他附件 <span style="font-size:12px;font-weight:400;color:var(--text-secondary)">归档形式：原件（保留原格式）</span>
-        <button class="btn btn-default btn-sm" style="color:var(--accent);border-color:var(--accent)">上传附件</button>
+        <button class="btn btn-default btn-sm" style="color:var(--accent);border-color:var(--accent)" onclick="arcUploadOther()">上传附件</button>
       </div>
       <div class="card" style="margin-bottom:24px">
         <div class="card-body" style="padding:0;overflow-x:auto">
@@ -9287,9 +9282,9 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
 
       <!-- 一键归档 -->
       <div style="text-align:center;padding:10px 0">
-        <button class="btn btn-primary" style="min-width:120px">一键归档</button>
-        <button class="btn btn-success" style="min-width:120px;margin-left:12px">导出PDF</button>
-        <button class="btn btn-default" style="min-width:120px;margin-left:12px">导出压缩包</button>
+        <button class="btn btn-primary" style="min-width:120px" onclick="arcArchiveAll()">一键归档</button>
+        <button class="btn btn-success" style="min-width:120px;margin-left:12px" onclick="dxExportNext(this, '项目归档PDF')">导出PDF</button>
+        <button class="btn btn-default" style="min-width:120px;margin-left:12px" onclick="arcExportZip()">导出压缩包</button>
       </div>
     </div>
 
@@ -16105,6 +16100,25 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
   </div>
 </div>
 
+<!-- 归档详情弹窗（归档节点每条可点开查看） -->
+<div class="modal-overlay" id="modalArchiveItem" style="z-index:10350">
+  <div class="modal" style="width:860px;max-width:96vw">
+    <div class="modal-header">
+      <h3 id="arcTitle">归档详情</h3>
+      <span class="modal-close" onclick="hideModal('modalArchiveItem')">x</span>
+    </div>
+    <div class="modal-body" style="padding:16px 20px;max-height:76vh;overflow:auto">
+      <div id="arcMeta" style="display:flex;flex-wrap:wrap;gap:8px 28px;font-size:12px;color:var(--text-secondary);background:#f6f9fd;border:1px solid #e6eef9;border-radius:4px;padding:10px 14px;margin-bottom:14px"></div>
+      <div id="arcBody"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default btn-sm" id="arcDlBtn" onclick="arcDownloadCurrent()">下载</button>
+      <button class="btn btn-default btn-sm" onclick="_toast('正在打印归档文件…')">打印</button>
+      <button class="btn btn-default btn-sm" onclick="hideModal('modalArchiveItem')">关闭</button>
+    </div>
+  </div>
+</div>
+
 <!-- 7补.155 商务标·评标结果汇总：技术标得分 + 商务标得分 → 综合得分总排名 -->
 <div class="modal-overlay" id="modalBizSummary" style="z-index:10300">
   <div class="modal" style="width:900px;max-width:96vw">
@@ -19956,6 +19970,12 @@ function dsExportBid() {
 // ===== 7补.208 原型版本更新记录：数据由《原型迭代改动记录（需求文档素材）.md》生成（gen_verlog.py），每次更新原型后重新生成 =====
 /* VERLOG-BEGIN */
 var _VER_LOG = [
+{
+"no": "7补.317",
+"d": "2026-11-25",
+"t": "项目归档节点补全详情页：24 条归档内容可点开查看，预览/下载可用",
+"s": "一、项目归档资料清单 15 条、开评标文件 9 份的名称改为可点击，操作列补「查看」，点开「归档详情」弹窗：顶部显示来源阶段（招标/技术标/商务标/不分阶段）、归档形式、资料状态、归档时间、提交人、来源页面，正文按条目给出内容（公告要素、附件清单、投标文件清单、公示信息与候选人、通知书要素、开评标各表数据）。二、开评标 9 行的「预览」「下载」原来是无动作的装饰文字，现预览打开同一详情弹窗、下载给出下载提示。三、缺口条目在详情页写明来源：「商务评审.pdf」由评标报告的商务评审章节合并导出、「技术.pdf」由技术标评审汇总导出、「报价.pdf」由报价一览表导出，并给出对应表数据。四、中标候选人公示页新增「公示附件」上传入口，使「中标候选人公示附件」不再是空条目。五、其他附件「上传附件」、一键归档、导出PDF、导出压缩包四个按钮补上动作。",
+},
 {
 "no": "7补.316",
 "d": "2026-11-25",
@@ -31639,6 +31659,43 @@ bizApplyFilter();
 // ===== 页面内提示/确认组件（替代原生 alert/confirm，不再触发浏览器级弹窗） =====
 // toast 提示（替代 alert，非阻塞，3.5s 自动消失）
 var _toastBox = null;
+// ===== 归档详情（7补.317）=====
+var ARC_ITEMS = {"招标公告": {"stage": "招标阶段", "form": "PDF（公告快照）", "src": "招标公告节点 · 公告信息（原型 4881 行）", "time": "2026-10-14 15:37:00", "by": "张采购员", "state": "正常", "body": "<table class=\"data-table\" style=\"font-size:12px;margin-bottom:12px\"><tbody><tr><td style=\"width:130px;color:var(--text-secondary)\">归档文件</td><td>招标公告.pdf（快照，A4 纵向）</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公告编号</td><td>YZJ-GC-2026-10-012-01</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公告标题</td><td>冻干制剂车间二期土建及机电安装工程招标公告</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发布媒体</td><td>中国采购与招标网、扬子江药业集团电子招标采购平台</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公告起始时间</td><td>2026-10-14 17:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公告结束时间</td><td>2026-10-21 17:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发布时间</td><td>2026-10-14 15:37:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发布人</td><td>张采购员</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">快照在发布成功时自动生成，内容与当时发布版本一致；后续修改公告不覆盖已归档快照。</div>"}, "招标公告附件": {"stage": "招标阶段", "form": "原件（保留原格式）", "src": "招标公告节点 · 公告附件（原型 4991 行）", "time": "2026-10-14 15:37:00", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">归档附件（2 个）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:280px\">文件名</th><th style=\"width:90px\">大小</th><th style=\"width:240px\">类型</th><th style=\"width:120px\">上传人</th></tr></thead><tbody><tr><td>1</td><td>资格审查条件说明.pdf</td><td>486 KB</td><td>application/pdf</td><td>张采购员</td></tr><tr><td>2</td><td>项目需求说明书.docx</td><td>312 KB</td><td>application/vnd.openxmlformats</td><td>张采购员</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">归档取发布时点已上传的全部附件，按原格式原样留存，不做转码。</div>"}, "招标文件": {"stage": "招标阶段", "form": "原件 + PDF 快照", "src": "招标文件节点（原型 5106 行）", "time": "2026-10-14 15:38:01", "by": "扬子江药业集团有限公司", "state": "正常", "body": "<table class=\"data-table\" style=\"font-size:12px;margin-bottom:12px\"><tbody><tr><td style=\"width:130px;color:var(--text-secondary)\">文件名称</td><td>扬子江药业集团装备工程部冻干制剂车间二期土建及机电安装工程/01包 招标文件</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">文件版本</td><td>V1（发布版）</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">页数</td><td>86 页</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">上传人</td><td>扬子江药业集团有限公司</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">上传时间</td><td>2026-10-14 15:38:01</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">审批状态</td><td>已审批（招标文件审批通过）</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">配套快照</td><td>招标文件.pdf（供只读留存）</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">原件与快照同时归档：原件用于回看可编辑内容，快照用于证明发布当时的版式与章节结构。</div>"}, "招标文件附件": {"stage": "招标阶段", "form": "原件（压缩包）", "src": "招标文件节点 · 招标文件附件（原型 5202 行）", "time": "2026-10-14 15:39:12", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">归档附件（随招标文件发放给投标人）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:320px\">文件名</th><th style=\"width:110px\">大小</th><th style=\"width:240px\">类型</th></tr></thead><tbody><tr><td>1</td><td>技术规格书.pdf</td><td>2.4 MB</td><td>application/pdf</td></tr><tr><td>2</td><td>工程量清单.xlsx</td><td>186 KB</td><td>application/vnd.ms-excel</td></tr><tr><td>3</td><td>图纸（建筑结构机电）.zip</td><td>18.6 MB</td><td>application/zip</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">对外发放的附件整体打包为 ZIP 归档，与「附件资料」（内部审批用、不对外）分开存放。</div>"}, "投标文件": {"stage": "技术标 + 商务标", "form": "原件（加密投标文件）", "src": "投标人客户端递交 → 发标管理 · 投标情况（原型 6827 行）", "time": "2026-10-28 15:45:03", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">归档投标文件（按投标人 × 标书类型）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:260px\">投标人</th><th style=\"width:110px\">标书类型</th><th style=\"width:170px\">递交时间</th><th style=\"width:90px\">加密</th><th style=\"width:90px\">状态</th></tr></thead><tbody><tr><td>1</td><td>泰州建设工程有限公司</td><td>技术标</td><td>2026-10-27 10:12:35</td><td>已加密</td><td>已解密</td></tr><tr><td>2</td><td>泰州建设工程有限公司</td><td>商务标</td><td>2026-10-27 10:12:35</td><td>已加密</td><td>已解密</td></tr><tr><td>3</td><td>南京恒通机电有限公司</td><td>技术标</td><td>2026-10-27 14:05:11</td><td>已加密</td><td>已解密</td></tr><tr><td>4</td><td>南京恒通机电有限公司</td><td>商务标</td><td>2026-10-27 14:05:11</td><td>已加密</td><td>已解密</td></tr><tr><td>5</td><td>苏州恒达建设工程有限公司</td><td>技术标</td><td>2026-10-27 16:41:08</td><td>已加密</td><td>已解密</td></tr><tr><td>6</td><td>苏州恒达建设工程有限公司</td><td>商务标</td><td>2026-10-27 16:41:08</td><td>已加密</td><td>已解密</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">技术标、商务标两册都归档；系统保存的是递交时的加密包与解密校验记录，不改变投标人原始文件。</div>"}, "答疑澄清附件": {"stage": "招标阶段", "form": "原件（保留原格式）", "src": "招标公告节点 · 答疑/澄清列表（原型 5027 行）", "time": "2026-10-18 11:20:44", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">归档澄清（2 次）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:360px\">澄清标题</th><th style=\"width:180px\">发布时间</th><th style=\"width:240px\">附件</th></tr></thead><tbody><tr><td>1</td><td>关于开标时间调整的澄清</td><td>2026-10-18 11:20:44</td><td>延期通知.pdf</td></tr><tr><td>2</td><td>关于工程量清单第 12 项口径的澄清</td><td>2026-10-20 09:05:12</td><td>清单澄清说明.docx</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">多次澄清时归档取最新版本及其全部附件，早期版本在招标文件历史版本中可查。</div>"}, "中标候选人公示": {"stage": "商务标", "form": "PDF（公示快照）", "src": "中标候选人公示节点（原型 8365 行）", "time": "2026-11-03 10:00:00", "by": "张采购员", "state": "正常", "body": "<table class=\"data-table\" style=\"font-size:12px;margin-bottom:12px\"><tbody><tr><td style=\"width:130px;color:var(--text-secondary)\">公示标题</td><td>冻干制剂车间二期土建及机电安装工程中标候选人公示</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公示开始时间</td><td>2026-11-03 10:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公示结束时间</td><td>2026-11-06 10:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发布媒体</td><td>中国采购与招标网、集团电子招标采购平台</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公示期</td><td>3 个工作日</td></tr></tbody></table><div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">公示候选人</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:70px\">排序</th><th style=\"width:320px\">中标候选人</th><th style=\"width:180px\">投标报价（元）</th><th style=\"width:140px\">评标得分</th></tr></thead><tbody><tr><td>1</td><td>泰州建设工程有限公司</td><td>8,860,865.00</td><td>93.63</td></tr><tr><td>2</td><td>南京恒通机电有限公司</td><td>9,120,000.00</td><td>91.70</td></tr><tr><td>3</td><td>苏州恒达建设工程有限公司</td><td>9,305,000.00</td><td>96.04</td></tr></tbody></table>"}, "中标候选人公示附件": {"stage": "商务标", "form": "原件（保留原格式）", "src": "中标候选人公示节点 · 公示附件（原型 8365 行，新增入口）", "time": "", "by": "", "state": "无", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">公示附件（暂无）</div><div style=\"font-size:12px;color:var(--text-muted);padding:18px 0;text-align:center\">本标段公示未上传附件。公示页已提供「上传附件」入口，上传后可归档。</div><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">此前核对发现该条在原型内无上传入口，本次已在公示页补入口；若业务上公示无需附件，本条可长期为空。</div>"}, "中标公告": {"stage": "商务标", "form": "PDF（公告快照）", "src": "中标公告节点（原型 8468 行）", "time": "2026-11-06 15:30:00", "by": "张采购员", "state": "正常", "body": "<table class=\"data-table\" style=\"font-size:12px;margin-bottom:12px\"><tbody><tr><td style=\"width:130px;color:var(--text-secondary)\">公告标题</td><td>冻干制剂车间二期土建及机电安装工程中标公告</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">中标人</td><td>泰州建设工程有限公司</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">中标金额（元）</td><td>8,860,865.00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发布时间</td><td>2026-11-06 15:30:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发布媒体</td><td>中国采购与招标网、集团电子招标采购平台</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">公告状态</td><td>已发布</td></tr></tbody></table>"}, "中标公告附件": {"stage": "商务标", "form": "原件（保留原格式）", "src": "中标公告节点 · 上传附件（原型 8566 行）", "time": "2026-11-06 15:30:00", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">归档附件（1 个）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:300px\">文件名</th><th style=\"width:90px\">大小</th><th style=\"width:240px\">类型</th><th style=\"width:120px\">上传人</th></tr></thead><tbody><tr><td>1</td><td>中标公告签章页.pdf</td><td>268 KB</td><td>application/pdf</td><td>张采购员</td></tr></tbody></table>"}, "中标通知书": {"stage": "商务标", "form": "PDF（含电子签章）", "src": "中标通知书节点（原型 8584 行）", "time": "2026-11-07 09:12:00", "by": "张采购员", "state": "正常", "body": "<table class=\"data-table\" style=\"font-size:12px;margin-bottom:12px\"><tbody><tr><td style=\"width:130px;color:var(--text-secondary)\">通知书编号</td><td>YZJ-GC-2026-10-012-ZB01</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">中标人</td><td>泰州建设工程有限公司</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">中标金额（元）</td><td>8,860,865.00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">发出时间</td><td>2026-11-07 09:12:00</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">签章方式</td><td>CA 电子签章（招标人 + 招标中心）</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">回执状态</td><td>已签收（2026-11-08 10:26）</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">PDF 快照保留电子签章与时间戳；如需验签，使用同一 CA 证书链校验。</div>"}, "中标通知书附件": {"stage": "商务标", "form": "原件（签章扫描件）", "src": "中标通知书节点 · 上传签章文件（原型 8703 行）", "time": "2026-11-07 09:12:00", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">归档附件（2 个）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:380px\">文件名</th><th style=\"width:110px\">大小</th><th style=\"width:240px\">类型</th></tr></thead><tbody><tr><td>1</td><td>中标通知书-纸质签章扫描件.pdf</td><td>1.2 MB</td><td>application/pdf</td></tr><tr><td>2</td><td>中标通知书回执扫描件.pdf</td><td>640 KB</td><td>application/pdf</td></tr></tbody></table>"}, "流标公告、公示": {"stage": "不分阶段", "form": "PDF（公示快照）", "src": "招标失败/废标节点 · 流标公示（原型 9340 行）", "time": "", "by": "", "state": "无", "body": "<div style=\"font-size:12px;color:var(--text-muted);padding:18px 0;text-align:center\">本项目未发生招标失败，无流标公示可归档。</div><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">流标类三条仅在招标失败处理方式选择「流标」并审批通过后产生；走「重新招标」「议价采购」时不产生。</div>"}, "流标附件": {"stage": "不分阶段", "form": "原件（保留原格式）", "src": "招标失败/废标节点 · 流标公示附件（原型 9389 行）", "time": "", "by": "", "state": "无", "body": "<div style=\"font-size:12px;color:var(--text-muted);padding:18px 0;text-align:center\">无（本项目未流标）。</div>"}, "流标原因": {"stage": "不分阶段", "form": "数据 + PDF（说明页）", "src": "招标失败/废标节点 · 招标失败原因（原型 9315 行）；议价流标为议价记录弹窗（原型 11974 行）", "time": "", "by": "", "state": "无", "body": "<div style=\"font-size:12px;color:var(--text-muted);padding:18px 0;text-align:center\">无（本项目未流标）。</div><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">流标原因归档为「结构化数据 + 说明页 PDF」：下拉原因入数据库，情况描述渲染为说明页一并留存。</div>"}, "开标一览表.pdf": {"stage": "技术标 + 商务标", "form": "PDF（系统生成）", "src": "开评标工具 · 开标一览表（原型 3799 行）", "time": "2026-10-28 15:52:52", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">开标记录（商务标 · 01 包）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:300px\">投标人</th><th style=\"width:180px\">投标报价（元）</th><th style=\"width:140px\">工期</th><th style=\"width:110px\">解密状态</th></tr></thead><tbody><tr><td>1</td><td>泰州建设工程有限公司</td><td>8,860,865.00</td><td>120 日历天</td><td>已解密</td></tr><tr><td>2</td><td>南京恒通机电有限公司</td><td>9,120,000.00</td><td>115 日历天</td><td>已解密</td></tr><tr><td>3</td><td>苏州恒达建设工程有限公司</td><td>9,305,000.00</td><td>118 日历天</td><td>已解密</td></tr><tr><td>4</td><td>泰州通达机电有限公司</td><td>9,486,200.00</td><td>120 日历天</td><td>已解密</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">技术标阶段与商务标阶段各自生成一份；分项排名时该文件在归档清单中隐藏（7补.57）。</div>"}, "评标报告.pdf": {"stage": "商务标", "form": "PDF（系统生成）", "src": "开评标工具 · 评标报告（原型 418/3821 行）", "time": "2026-11-02 17:20:10", "by": "张采购员", "state": "正常", "body": "<table class=\"data-table\" style=\"font-size:12px;margin-bottom:12px\"><tbody><tr><td style=\"width:130px;color:var(--text-secondary)\">评标委员会</td><td>5 人（组长：李高工）</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">评标方式</td><td>综合评估法（技术:商务 = 30%:70%）</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">评审结论</td><td>推荐 泰州建设工程有限公司 为第一中标候选人</td></tr><tr><td style=\"width:130px;color:var(--text-secondary)\">报告生成时间</td><td>2026-11-02 17:20:10</td></tr></tbody></table><div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">评审结论摘要</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:300px\">投标人</th><th style=\"width:110px\">技术分</th><th style=\"width:110px\">商务分</th><th style=\"width:120px\">综合得分</th><th style=\"width:100px\">结论</th></tr></thead><tbody><tr><td>泰州建设工程有限公司</td><td>28.09</td><td>65.54</td><td>93.63</td><td>推荐</td></tr><tr><td>苏州恒达建设工程有限公司</td><td>28.81</td><td>67.23</td><td>96.04</td><td>候选</td></tr><tr><td>南京恒通机电有限公司</td><td>26.40</td><td>65.30</td><td>91.70</td><td>候选</td></tr><tr><td>泰州通达机电有限公司</td><td>24.30</td><td>65.39</td><td>89.69</td><td>未推荐</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">仅商务标评标环节生成，归档取最终版（含评标委员会签署页）。</div>"}, "技术.pdf": {"stage": "技术标", "form": "PDF（系统生成）", "src": "技术标评审节点 · 评审结果汇总（原型 8365 前序节点）", "time": "2026-10-30 16:05:33", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">技术标得分汇总</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:320px\">投标人</th><th style=\"width:160px\">技术标得分</th><th style=\"width:110px\">排名</th></tr></thead><tbody><tr><td>1</td><td>苏州恒达建设工程有限公司</td><td>96.05</td><td>1</td></tr><tr><td>2</td><td>泰州建设工程有限公司</td><td>93.63</td><td>2</td></tr><tr><td>3</td><td>南京恒通机电有限公司</td><td>88.00</td><td>3</td></tr><tr><td>4</td><td>泰州通达机电有限公司</td><td>81.00</td><td>4</td></tr></tbody></table><div style=\"font-size:12px;color:#d46b08;background:#fff7e6;margin:10px 0 0;border:1px solid #ffd591;border-radius:4px;padding:8px 12px\">来源说明：该文件由技术标评审节点的「评审结果汇总」导出；核对时原型内无独立「导出技术.pdf」按钮，归档由系统按节点结论生成，本次已在详情页标明来源路径。</div>"}, "评审纪律表.pdf": {"stage": "技术标", "form": "PDF（系统生成）", "src": "开评标工具 · 评审纪律 / 电子签名（原型 4319 行）", "time": "2026-10-30 09:10:00", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">评委签署记录</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:140px\">评委</th><th style=\"width:180px\">角色</th><th style=\"width:180px\">签署时间</th><th style=\"width:120px\">签署方式</th></tr></thead><tbody><tr><td>1</td><td>李高工</td><td>评标委员会组长</td><td>2026-10-30 09:10:00</td><td>电子签名</td></tr><tr><td>2</td><td>张教授</td><td>技术专家</td><td>2026-10-30 09:12:20</td><td>电子签名</td></tr><tr><td>3</td><td>刘二</td><td>技术专家</td><td>2026-10-30 09:13:05</td><td>电子签名</td></tr></tbody></table>"}, "商务评审.pdf": {"stage": "商务标", "form": "PDF（系统生成）", "src": "评标报告 · 商务评审章节（合并导出）", "time": "2026-11-02 17:20:10", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">商务评审（价格分 + 商务分）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:300px\">投标人</th><th style=\"width:170px\">评标价（元）</th><th style=\"width:110px\">价格分</th><th style=\"width:110px\">商务分</th><th style=\"width:130px\">商务标得分</th></tr></thead><tbody><tr><td>泰州建设工程有限公司</td><td>8,860,865.00</td><td>55.54</td><td>10.00</td><td>65.54</td></tr><tr><td>南京恒通机电有限公司</td><td>9,120,000.00</td><td>53.80</td><td>11.50</td><td>65.30</td></tr><tr><td>苏州恒达建设工程有限公司</td><td>9,305,000.00</td><td>52.23</td><td>15.00</td><td>67.23</td></tr><tr><td>泰州通达机电有限公司</td><td>9,486,200.00</td><td>53.39</td><td>12.00</td><td>65.39</td></tr></tbody></table><div style=\"font-size:12px;color:#d46b08;background:#fff7e6;margin:10px 0 0;border:1px solid #ffd591;border-radius:4px;padding:8px 12px\">来源说明：核对时该条在原型内只有归档清单占位、无独立评审页。本版按口径补为「由评标报告的商务评审章节合并导出」，并在详情页给出算式与数据来源；如需独立页面，可按本表结构新建。</div>"}, "符合性.pdf": {"stage": "商务标", "form": "PDF（系统生成）", "src": "开评标工具 · 符合性评审表（原型 3979 行）", "time": "2026-11-02 10:15:44", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">符合性审查结论</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:300px\">投标人</th><th style=\"width:120px\">形式审查</th><th style=\"width:120px\">资格条件</th><th style=\"width:120px\">响应性</th><th style=\"width:110px\">结论</th></tr></thead><tbody><tr><td>泰州建设工程有限公司</td><td>通过</td><td>通过</td><td>通过</td><td>合格</td></tr><tr><td>南京恒通机电有限公司</td><td>通过</td><td>通过</td><td>通过</td><td>合格</td></tr><tr><td>苏州恒达建设工程有限公司</td><td>通过</td><td>通过</td><td>通过</td><td>合格</td></tr><tr><td>泰州通达机电有限公司</td><td>通过</td><td>未通过</td><td>通过</td><td>不合格</td></tr></tbody></table>"}, "评标结果汇总.pdf": {"stage": "商务标", "form": "PDF（系统生成）", "src": "评标步骤 · 评标结果汇总（原型 4345 行，7补.147 技术标阶段去掉该卡片）", "time": "2026-11-02 17:22:00", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">综合得分总排名（技术:商务 = 30%:70%）</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:70px\">排名</th><th style=\"width:300px\">投标人</th><th style=\"width:140px\">技术标得分</th><th style=\"width:140px\">商务标得分</th><th style=\"width:130px\">综合得分</th></tr></thead><tbody><tr><td>1</td><td>苏州恒达建设工程有限公司</td><td>28.81</td><td>67.23</td><td>96.04</td></tr><tr><td>2</td><td>泰州建设工程有限公司</td><td>28.09</td><td>65.54</td><td>93.63</td></tr><tr><td>3</td><td>南京恒通机电有限公司</td><td>26.40</td><td>65.30</td><td>91.70</td></tr><tr><td>4</td><td>泰州通达机电有限公司</td><td>24.30</td><td>65.39</td><td>89.69</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">汇总弹窗（评分表）与归档 PDF 取同一份计算结果；技术标得分、商务标得分均为按权重折算后的分数。</div>"}, "报价.pdf": {"stage": "商务标", "form": "PDF（系统生成）", "src": "报价一览表 / 报价节点（原型 9058 行）", "time": "2026-11-02 16:40:12", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">各投标人报价明细</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:300px\">投标人</th><th style=\"width:180px\">首轮报价（元）</th><th style=\"width:180px\">最终报价（元）</th><th style=\"width:100px\">降幅</th></tr></thead><tbody><tr><td>1</td><td>泰州建设工程有限公司</td><td>8,980,000.00</td><td>8,860,865.00</td><td>1.33%</td></tr><tr><td>2</td><td>南京恒通机电有限公司</td><td>9,300,000.00</td><td>9,120,000.00</td><td>1.94%</td></tr><tr><td>3</td><td>苏州恒达建设工程有限公司</td><td>9,500,000.00</td><td>9,305,000.00</td><td>2.05%</td></tr><tr><td>4</td><td>泰州通达机电有限公司</td><td>9,520,000.00</td><td>9,486,200.00</td><td>0.36%</td></tr></tbody></table><div style=\"font-size:12px;color:#d46b08;background:#fff7e6;margin:10px 0 0;border:1px solid #ffd591;border-radius:4px;padding:8px 12px\">来源说明：由报价一览表（报价节点结论）导出；核对时原型内无独立「导出报价.pdf」按钮，本次已在详情页标明来源路径。</div>"}, "评委签到表.pdf": {"stage": "技术标", "form": "PDF（系统生成）", "src": "开评标工具 · 评委签到（原型 4513 / 8230 行）", "time": "2026-10-30 08:55:00", "by": "张采购员", "state": "正常", "body": "<div style=\"font-size:13px;font-weight:700;margin:14px 0 8px;color:#1f3a5f\">评委签到记录</div><table class=\"data-table\" style=\"font-size:12px\"><thead><tr><th style=\"width:60px\">序号</th><th style=\"width:140px\">评委</th><th style=\"width:200px\">所属单位</th><th style=\"width:180px\">签到时间</th><th style=\"width:120px\">签到方式</th></tr></thead><tbody><tr><td>1</td><td>李高工</td><td>集团技术中心</td><td>2026-10-30 08:55:00</td><td>人脸核验</td></tr><tr><td>2</td><td>张教授</td><td>外部专家库</td><td>2026-10-30 08:57:12</td><td>人脸核验</td></tr><tr><td>3</td><td>刘二</td><td>外部专家库</td><td>2026-10-30 08:58:40</td><td>人脸核验</td></tr></tbody></table><div style=\"font-size:12px;color:var(--text-muted);background:transparent;margin:10px 0 0\">签到表与技术标评审绑定；商务标阶段评委沿用同一签到记录。</div>"}};
+var _arcCur = '';
+function arcOpen(name) {
+  var it = ARC_ITEMS[name];
+  if (!it) { _toast('暂无该归档条目的详情'); return; }
+  _arcCur = name;
+  document.getElementById('arcTitle').textContent = '归档详情 · ' + name;
+  var meta = [
+    ['来源阶段', it.stage || '—'],
+    ['归档形式', it.form || '—'],
+    ['资料状态', it.state || '—'],
+    ['归档时间', it.time || '—'],
+    ['提交人', it.by || '—']
+  ];
+  document.getElementById('arcMeta').innerHTML = meta.map(function (kv) {
+    return '<span><b style="color:#1f3a5f;font-weight:600">' + kv[0] + '：</b>' + kv[1] + '</span>';
+  }).join('') + '<span style="width:100%"><b style="color:#1f3a5f;font-weight:600">来源页面：</b>' + (it.src || '—') + '</span>';
+  document.getElementById('arcBody').innerHTML = it.body || '';
+  showModal('modalArchiveItem');
+}
+function arcDownload(name) {
+  _toast('开始下载「' + name + '」…');
+}
+function arcDownloadCurrent() {
+  if (!_arcCur) { _toast('请先选择归档条目'); return; }
+  _toast('开始下载「' + _arcCur + '」…');
+}
+function arcUploadOther() {
+  _toast('演示环境：请选择其他附件');
+}
+function arcArchiveAll() {
+  _toast('已开始一键归档：共 24 条，生成 PDF 快照与压缩包…');
+}
+function arcExportZip() {
+  _toast('已开始导出归档压缩包…');
+}
 function _toast(msg) {
   if (!_toastBox) {
     _toastBox = document.createElement('div');
