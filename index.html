@@ -22,11 +22,18 @@ button:disabled{opacity:.6;cursor:default}
   <input id="pw" type="password" placeholder="请输入密码" autofocus>
   <button id="go" type="submit">进入目录</button>
   <div class="err" id="err"></div>
-  <div class="foot">首次输入后本机保持登录；如需在本机退出，可在目录页底部点「清除本机密码」。</div>
+  <div class="card">
+  <h2>归档文件范围与取值逻辑<span class="tag">2026-11-25</span></h2>
+  <p>24 条归档条目（项目归档资料 15 条 + 开评标文件 9 条）逐条列出「归档哪些文件」与「从哪来、怎么取值」，共 2 页。</p>
+  <a class="b" href="preview.html?f=ArchiveScope.pdf&w=ArchiveScope.docx&t=%E5%BD%92%E6%A1%A3%E6%96%87%E4%BB%B6%E8%8C%83%E5%9B%B4%E4%B8%8E%E5%8F%96%E5%80%BC%E9%80%BB%E8%BE%91&m=2%20%E9%A1%B5%20%C2%B7%202026-11-25&fn=%E5%BD%92%E6%A1%A3%E6%96%87%E4%BB%B6%E8%8C%83%E5%9B%B4%E4%B8%8E%E5%8F%96%E5%80%BC%E9%80%BB%E8%BE%91">在线预览（翻页阅读）</a>
+  <a class="b ghost" href="ArchiveScope.docx" download>下载 Word（37 KB）</a>
+  <a class="b ghost" href="ArchiveScope.pdf" download>下载 PDF</a>
+</div>
+<div class="foot">首次输入后本机保持登录；如需在本机退出，可在目录页底部点「清除本机密码」。</div>
 </form>
 <script>
 (function(){
-  var SALT=Uint8Array.from(atob('LceGFFHIcmtmV9yBCVhSmw=='),function(c){return c.charCodeAt(0);});
+  var SALT=Uint8Array.from(atob('jZ4SzsPd0hdCI+weljTETA=='),function(c){return c.charCodeAt(0);});
   var ITER=200000, KEY='yzj_key';
   var cached=null; try { cached=localStorage.getItem(KEY); } catch(e){}
   function openLanding(kb64){
