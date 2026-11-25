@@ -9083,7 +9083,7 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
       <!-- 全流程归档说明 -->
       <div style="background:#f0f9eb;border:1px solid #e1f3d8;border-radius:4px;padding:12px 16px;margin-bottom:16px;font-size:12px;color:#389e0d">
         <b>全流程电子归档：</b>实现项目全生命周期资料一站式归档。包括前端立项/招标申请资料（来自 PMS / CMS / SRM）、中端招标过程文件（公告、变更、招标文件、投标文件、答疑纪要等）。<br>
-        <span style="color:var(--danger)">法规要求资料需保存 <b>15年</b></span> | 支持一键导出PDF或压缩包
+        <span style="color:var(--danger)">法规要求资料需保存 <b>15年</b></span> | 支持一键归档，文件可逐个下载留存
       </div>
 
       <!-- 项目归档资料清单 -->
@@ -9283,8 +9283,6 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
       <!-- 一键归档 -->
       <div style="text-align:center;padding:10px 0">
         <button class="btn btn-primary" style="min-width:120px" onclick="arcArchiveAll()">一键归档</button>
-        <button class="btn btn-success" style="min-width:120px;margin-left:12px" onclick="dxExportNext(this, '项目归档PDF')">导出PDF</button>
-        <button class="btn btn-default" style="min-width:120px;margin-left:12px" onclick="arcExportZip()">导出压缩包</button>
       </div>
     </div>
 
@@ -19969,6 +19967,12 @@ function dsExportBid() {
 // ===== 7补.208 原型版本更新记录：数据由《原型迭代改动记录（需求文档素材）.md》生成（gen_verlog.py），每次更新原型后重新生成 =====
 /* VERLOG-BEGIN */
 var _VER_LOG = [
+{
+"no": "7补.321",
+"d": "2026-11-25",
+"t": "项目归档节点去掉「导出PDF」「导出压缩包」两个按钮，只保留「一键归档」",
+"s": "归档节点底部原来并排三个按钮：一键归档 / 导出PDF / 导出压缩包。按要求去掉后两个，仅保留「一键归档」；同步把顶部说明由「支持一键导出PDF或压缩包」改为「支持一键归档，文件可逐个下载留存」，并删除不再被引用的 arcExportZip() 函数。归档清单与开评标文件列表仍逐条可点、可预览与下载，归档压缩附件区继续列出已生成的压缩包供下载。",
+},
 {
 "no": "7补.320",
 "d": "2026-11-25",
@@ -31743,9 +31747,6 @@ function arcUploadOther() {
 }
 function arcArchiveAll() {
   _toast('已开始一键归档：共 24 条，生成 PDF 快照与压缩包…');
-}
-function arcExportZip() {
-  _toast('已开始导出归档压缩包…');
 }
 function _toast(msg) {
   if (!_toastBox) {
