@@ -16102,13 +16102,12 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
 
 <!-- 归档详情弹窗（归档节点每条可点开查看） -->
 <div class="modal-overlay" id="modalArchiveItem" style="z-index:10350">
-  <div class="modal" style="width:860px;max-width:96vw">
+  <div class="modal" style="width:900px;max-width:96vw">
     <div class="modal-header">
-      <h3 id="arcTitle">归档详情</h3>
+      <h3 id="arcTitle">文件预览</h3>
       <span class="modal-close" onclick="hideModal('modalArchiveItem')">x</span>
     </div>
     <div class="modal-body" style="padding:16px 20px;max-height:76vh;overflow:auto">
-      <div id="arcMeta" style="display:flex;flex-wrap:wrap;gap:8px 28px;font-size:12px;color:var(--text-secondary);background:#f6f9fd;border:1px solid #e6eef9;border-radius:4px;padding:10px 14px;margin-bottom:14px"></div>
       <div id="arcBody"></div>
     </div>
     <div class="modal-footer">
@@ -19970,6 +19969,12 @@ function dsExportBid() {
 // ===== 7补.208 原型版本更新记录：数据由《原型迭代改动记录（需求文档素材）.md》生成（gen_verlog.py），每次更新原型后重新生成 =====
 /* VERLOG-BEGIN */
 var _VER_LOG = [
+{
+"no": "7补.318",
+"d": "2026-11-25",
+"t": "归档详情页简化为「文件名 + 文件本身」的文件预览",
+"s": "按反馈收敛：归档详情弹窗不再显示来源阶段、归档形式、资料状态、归档时间、提交人、来源页面等元信息，也不再显示任何说明性括注。弹窗标题即文件名，正文是一张 A4 白页（模拟阅读器）：页内只放该文件自身的标题与内容（公告要素、附件清单、开评标表数据等原始文件内容），底部一行页码「第 1 页 / 共 1 页」。预览入口与下载、关闭按钮保持不变。",
+},
 {
 "no": "7补.317",
 "d": "2026-11-25",
@@ -31666,18 +31671,18 @@ function arcOpen(name) {
   var it = ARC_ITEMS[name];
   if (!it) { _toast('暂无该归档条目的详情'); return; }
   _arcCur = name;
-  document.getElementById('arcTitle').textContent = '归档详情 · ' + name;
-  var meta = [
-    ['来源阶段', it.stage || '—'],
-    ['归档形式', it.form || '—'],
-    ['资料状态', it.state || '—'],
-    ['归档时间', it.time || '—'],
-    ['提交人', it.by || '—']
-  ];
-  document.getElementById('arcMeta').innerHTML = meta.map(function (kv) {
-    return '<span><b style="color:#1f3a5f;font-weight:600">' + kv[0] + '：</b>' + kv[1] + '</span>';
-  }).join('') + '<span style="width:100%"><b style="color:#1f3a5f;font-weight:600">来源页面：</b>' + (it.src || '—') + '</span>';
-  document.getElementById('arcBody').innerHTML = it.body || '';
+  document.getElementById('arcTitle').textContent = name;
+  var page = ''
+    + '<div style="background:#eef1f5;padding:18px;border-radius:6px">'
+    + '<div style="background:#fff;box-shadow:0 1px 8px rgba(0,0,0,.14);padding:36px 44px;min-height:520px;font-family:SimSun,serif;color:#222;font-size:13px;line-height:1.9">'
+    + '<div style="text-align:center;font-size:17px;font-weight:700;margin-bottom:20px;font-family:SimHei,Microsoft YaHei,sans-serif">' + name + '</div>'
+    + (it.body || '')
+    + '</div>'
+    + '<div style="text-align:center;font-size:11px;color:#8a94a6;margin-top:10px">第 1 页 / 共 1 页</div>'
+    + '</div>';
+  document.getElementById('arcBody').innerHTML = page;
+  var _nd = document.querySelectorAll('#arcBody div[style*="margin:10px 0 0"]');
+  Array.prototype.forEach.call(_nd, function (x) { x.parentNode.removeChild(x); });
   showModal('modalArchiveItem');
 }
 function arcDownload(name) {
