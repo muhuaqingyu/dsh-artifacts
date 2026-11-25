@@ -10758,16 +10758,16 @@ body { font-family: 'Microsoft YaHei','PingFang SC','Helvetica Neue',sans-serif;
         <div style="display:flex;flex-direction:column;gap:8px">
           <label class="radio-item" style="font-weight:600"><input type="checkbox" checked onchange="toggleBidArchiveAll(this)"> 全部</label>
           <div style="padding-left:24px;display:flex;flex-direction:column;gap:6px">
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价邀请函 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 邀请情况 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅 <span style="font-size:11px;color:var(--text-secondary)">PDF + 数据</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅聊天记录 <span style="font-size:11px;color:var(--text-secondary)">—（无来源）</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 确定成交人 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 结果公示 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 合同管理 <span style="font-size:11px;color:var(--text-secondary)">原件 + PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 变更 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 在线问答 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
-            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 重新竞价/项目终止 <span style="font-size:11px;color:var(--text-secondary)">PDF</span></label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价邀请函</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 邀请情况</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 竞价大厅聊天记录</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 确定成交人</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 结果公示</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 合同管理</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 变更</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 在线问答</label>
+            <label class="radio-item"><input type="checkbox" class="bid-archive-item" checked> 重新竞价/项目终止</label>
           </div>
         </div>
       </div>
@@ -19957,10 +19957,10 @@ function dsExportBid() {
 /* VERLOG-BEGIN */
 var _VER_LOG = [
 {
-"no": "7补.314",
+"no": "7补.316",
 "d": "2026-11-25",
 "t": "归档清单新增「归档形式」列，明确每项内容的下载与本地留存形式",
-"s": "项目归档资料清单 15 条、开评标文件 9 条各新增一列「归档形式」：公告与公示为 PDF（快照），附件类为原件（保留原格式，压缩包/签章扫描件单独标注），招标文件为原件 + PDF 快照，投标文件为原件（加密），流标原因为数据 + PDF 说明页，开评标文件统一为 PDF（系统生成）。其他附件与归档压缩附件在标题右侧标明形式（原件 / ZIP 压缩包），竞价归档 10 个复选项在名称后直接标出形式。目的是让每类归档内容都能明确「以什么形式下载、能不能本地留存」，便于与技术方确认导出实现。",
+"s": "项目归档资料清单 15 条、开评标文件 9 条各新增一列「归档形式」：公告与公示为 PDF（快照），附件类为原件（保留原格式，压缩包/签章扫描件单独标注），招标文件为原件 + PDF 快照，投标文件为原件（加密），流标原因为数据 + PDF 说明页，开评标文件统一为 PDF（系统生成）。其他附件与归档压缩附件在标题右侧标明形式（原件 / ZIP 压缩包）。目的是让每类归档内容都能明确「以什么形式下载、能不能本地留存」，便于与技术方确认导出实现。",
 },
   {"no": "7补.315", "d": "2026-11-24", "t": "商务标发布进入招标文件制作：去掉「导入文件」「上传至平台」步骤，评审办法设置下一步即文件上传", "s": "从商务标发布节点入口进入招标文件制作工具时，步骤条只保留「项目配置 → 开标项设置 → 评审办法设置」三步，不再出现「导入文件」与「上传至平台」；项目配置页下一步直达开标项设置，开标项设置上一步回到项目配置；评审办法设置页右下按钮改为「文件上传」，点击后与原「上传至平台」页的文件上传按钮完全同一逻辑（校验招标文件已上传、开标项至少一条、商务标评审步骤已设置，二次确认后写入上传时间并提示「招标文件已上传至平台」）；技术标流程仍为 5 步不变。"},
 {
